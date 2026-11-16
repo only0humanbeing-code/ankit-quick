@@ -1,0 +1,6 @@
+{
+  "name": "QuickKart",
+  "description": "Mobile-first 10-minute grocery and daily essentials quick-commerce app for India with INR pricing, smart filters, saved addresses, orders, and full admin catalog management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
