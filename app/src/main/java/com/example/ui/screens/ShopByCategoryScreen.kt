@@ -28,17 +28,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.outlined.BakeryDining
+import androidx.compose.material.icons.outlined.CardGiftcard
 import androidx.compose.material.icons.outlined.ChildCare
 import androidx.compose.material.icons.outlined.CleaningServices
 import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Eco
 import androidx.compose.material.icons.outlined.Egg
 import androidx.compose.material.icons.outlined.Fastfood
+import androidx.compose.material.icons.outlined.HealthAndSafety
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.LocalCafe
 import androidx.compose.material.icons.outlined.Pets
 import androidx.compose.material.icons.outlined.Restaurant
+import androidx.compose.material.icons.outlined.RoomService
 import androidx.compose.material.icons.outlined.Spa
+import androidx.compose.material.icons.outlined.TakeoutDining
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
@@ -83,13 +87,12 @@ fun ShopByCategoryScreen(
     var expandedGroupId by rememberSaveable { mutableStateOf<String?>(null) }
 
     val filteredGroups = remember(searchQuery) {
-        val q = searchQuery.trim().lowercase()
+        val q = searchQuery.trim()
         if (q.isEmpty()) {
             ShopCategoryTaxonomy.groups
         } else {
             ShopCategoryTaxonomy.groups.filter { group ->
-                group.title.lowercase().contains(q) ||
-                    group.subcategories.any { it.lowercase().contains(q) }
+                ShopCategoryTaxonomy.matchesQuery(group, q)
             }
         }
     }
@@ -213,7 +216,9 @@ fun ShopByCategoryScreen(
 
         // Expandable Category Accordion List
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("shop_by_category_list"),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
             if (searchQuery.isNotBlank()) {
@@ -337,7 +342,11 @@ private fun ShopCategoryAccordionItem(
                     modifier = Modifier.testTag("shop_subcat_${group.id}_all")
                 )
 
-                val visibleSubs = if (searchQuery.isBlank() || group.title.contains(searchQuery, ignoreCase = true)) {
+                val visibleSubs = if (
+                    searchQuery.isBlank() ||
+                    group.title.contains(searchQuery, ignoreCase = true) ||
+                    group.subcategories.none { it.contains(searchQuery, ignoreCase = true) }
+                ) {
                     group.subcategories
                 } else {
                     group.subcategories.filter { it.contains(searchQuery, ignoreCase = true) }
@@ -399,5 +408,9 @@ private fun shopCategoryOutlineIcon(iconKey: String): ImageVector = when (iconKe
     "eggs_meat_fish" -> Icons.Outlined.Egg
     "gourmet_world" -> Icons.Outlined.Restaurant
     "baby_care" -> Icons.Outlined.ChildCare
+    "stationery_toys_gifts" -> Icons.Outlined.CardGiftcard
+    "paper_disposables" -> Icons.Outlined.TakeoutDining
+    "industrial_catering" -> Icons.Outlined.RoomService
+    "ayurveda_wellness" -> Icons.Outlined.HealthAndSafety
     else -> Icons.Outlined.Inventory2
 }

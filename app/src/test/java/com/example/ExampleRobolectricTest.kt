@@ -1,8 +1,9 @@
 package com.example
 
 import android.content.Context
-import androidx.room.Room
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
+import androidx.room.Room
 import com.example.data.local.QuickKartDatabase
 import com.example.data.local.SeedCatalogData
 import com.example.data.local.ShopCategoryTaxonomy
@@ -256,7 +257,23 @@ class ExampleRobolectricTest {
         repository.ensureSeeded()
         val products = repository.products.first()
 
-        assertEquals(12, ShopCategoryTaxonomy.groups.size)
+        assertEquals(16, ShopCategoryTaxonomy.groups.size)
+        val groupTitles = ShopCategoryTaxonomy.groups.map { it.title }
+        assertTrue(
+            groupTitles.containsAll(
+                listOf(
+                    "Electronic Appliances, Home & Kitchen Essentials",
+                    "Bakery, Cake, Dairy & Fresh, Frozen",
+                    "Body Care & Beauty",
+                    "Baby Care, Female & Hygiene",
+                    "Stationery, Toys & Gifts",
+                    "Paper Goods & Disposables",
+                    "Industrial & Catering",
+                    "Ayurveda, Health & Wellness"
+                )
+            )
+        )
+
         ShopCategoryTaxonomy.groups.forEach { group ->
             val groupProducts = products.filter { it.shopCategory == group.title }
             assertTrue("Missing products for ${group.title}", groupProducts.isNotEmpty())
@@ -266,12 +283,45 @@ class ExampleRobolectricTest {
             }
         }
 
+        // Verify typo-tolerant search aliases for newly added and renamed options
+        assertTrue(
+            ShopCategoryTaxonomy.matchesQuery(
+                ShopCategoryTaxonomy.findByTitle("Stationery, Toys & Gifts")!!,
+                "stationary"
+            )
+        )
+        assertTrue(
+            ShopCategoryTaxonomy.matchesQuery(
+                ShopCategoryTaxonomy.findByTitle("Paper Goods & Disposables")!!,
+                "paper goods & disposable"
+            )
+        )
+        assertTrue(
+            ShopCategoryTaxonomy.matchesQuery(
+                ShopCategoryTaxonomy.findByTitle("Industrial & Catering")!!,
+                "cattering"
+            )
+        )
+        assertTrue(
+            ShopCategoryTaxonomy.matchesQuery(
+                ShopCategoryTaxonomy.findByTitle("Ayurveda, Health & Wellness")!!,
+                "ayurveda health & wellness"
+            )
+        )
+
+        // Verify in-place taxonomy sync when upgrading an existing database with old shopCategory strings
+        val legacyProduct = products.first { it.id == "p119" }.copy(shopCategory = "Baby Care")
+        repository.upsertProduct(legacyProduct)
+        repository.ensureSeeded()
+        val upgradedProduct = repository.products.first().first { it.id == "p119" }
+        assertEquals("Baby Care, Female & Hygiene", upgradedProduct.shopCategory)
+
         val vm = QuickKartViewModel(repository)
-        vm.selectShopCategoryFilter("Electronics", "Audio devices")
-        assertEquals("Electronics", vm.filterState.value.shopCategory)
+        vm.selectShopCategoryFilter("Electronic Appliances, Home & Kitchen Essentials", "Audio devices")
+        assertEquals("Electronic Appliances, Home & Kitchen Essentials", vm.filterState.value.shopCategory)
         assertEquals("Audio devices", vm.filterState.value.subCategory)
         vm.setSubCategoryWithinCurrentFilter("Smart Wearables")
-        assertEquals("Electronics", vm.filterState.value.shopCategory)
+        assertEquals("Electronic Appliances, Home & Kitchen Essentials", vm.filterState.value.shopCategory)
         assertEquals("Smart Wearables", vm.filterState.value.subCategory)
     }
 
@@ -280,7 +330,7 @@ class ExampleRobolectricTest {
         repository.ensureSeeded()
         val brands = repository.brands.first()
         assertEquals(23, brands.size)
-        assertTrue(brands.all { it.logoUrl.startsWith("https://") })
+        assertTrue(brands.all { it.logoUrl.startsWith("https://") && !it.logoUrl.contains(".svg", ignoreCase = true) })
 
         val dabur = brands.first { it.id == "brand_dabur" }
         val kissanLogo = com.example.ui.components.resolveSubBrandLogoUrl("Kissan", dabur.logoUrl)
@@ -335,5 +385,152 @@ class ExampleRobolectricTest {
         val savedAfterRemove = repository.toggleSaveForLater("p155")
         assertFalse(savedAfterRemove)
         assertFalse("p155" in repository.savedProductIds.first())
+    }
+
+    @Test
+    fun `company sub-brands are richly populated with zero cross-company leaks`() = runTest {
+        repository.ensureSeeded()
+        val products = repository.products.first()
+
+        fun subBrandsOf(brandId: String): Set<String> =
+            products.filter { it.brandId == brandId }.map { it.subBrand }.toSet()
+
+        val hul = subBrandsOf("brand_hul")
+        assertTrue("Expected rich HUL sub-brands, got $hul", hul.size >= 20)
+        assertTrue(hul.containsAll(listOf("Surf Excel", "Vim", "Dove", "Kissan", "Horlicks", "Lux", "Lifebuoy", "Red Label")))
+        assertFalse(hul.contains("Lizol"))
+        assertFalse(hul.contains("Pampers"))
+
+        val tata = subBrandsOf("brand_tata")
+        assertTrue("Expected rich Tata sub-brands, got $tata", tata.size >= 10)
+        assertTrue(tata.containsAll(listOf("Tata Sampann", "Tata Salt", "Tata Tea Gold", "Tetley", "Himalayan", "Croma Tech")))
+        assertFalse(tata.contains("Saffola"))
+        assertFalse(tata.contains("Lizol"))
+
+        val itc = subBrandsOf("brand_itc")
+        assertTrue("Expected rich ITC sub-brands, got $itc", itc.size >= 10)
+        assertTrue(itc.containsAll(listOf("Aashirvaad", "Sunfeast", "Sunfeast YiPPee!", "Bingo!", "Classmate", "Savlon")))
+        assertFalse(itc.contains("Saffola"))
+        assertFalse(itc.contains("Pampers"))
+        assertFalse(itc.contains("Croma Tech"))
+
+        val reckitt = subBrandsOf("brand_reckitt")
+        assertTrue("Expected rich Reckitt sub-brands, got $reckitt", reckitt.size >= 9)
+        assertTrue(reckitt.containsAll(listOf("Dettol", "Harpic", "Lizol", "Veet", "Moov", "Colin", "Vanish")))
+
+        val godrej = subBrandsOf("brand_godrej")
+        assertTrue("Expected rich Godrej sub-brands, got $godrej", godrej.size >= 6)
+        assertTrue(godrej.containsAll(listOf("Good Knight", "Godrej No.1", "Hit", "Godrej Aer", "Godrej Protekt")))
+        assertFalse(godrej.contains("Lizol"))
+
+        val marico = subBrandsOf("brand_marico")
+        assertTrue("Expected rich Marico sub-brands, got $marico", marico.size >= 5)
+        assertTrue(marico.containsAll(listOf("Saffola", "Parachute", "Hair & Care", "Set Wet", "Livon")))
+
+        val pepsico = subBrandsOf("brand_pepsico")
+        assertTrue("Expected rich Pepsico sub-brands, got $pepsico", pepsico.size >= 5)
+        assertTrue(pepsico.containsAll(listOf("Lay's", "Kurkure", "Quaker", "Doritos", "Uncle Chipps")))
+
+        val varun = subBrandsOf("brand_varun")
+        assertTrue(varun.containsAll(listOf("Tropicana", "Aquafina", "Sting")))
+    }
+
+    @Test
+    fun `default user profile is logged in and incremental ensureSeeded restores missing brands and products safely`() = runTest {
+        assertTrue(SeedCatalogData.defaultUserProfile.isLoggedIn)
+        // Seed only 1 category to simulate an existing partial database upgrade
+        repository.upsertCategory(SeedCatalogData.categories.first())
+        // Calling ensureSeeded() on non-empty categoryDao must upsert all 12 categories and 23 brands before inserting products
+        repository.ensureSeeded()
+        assertEquals(12, repository.categories.first().size)
+        assertEquals(23, repository.brands.first().size)
+        assertEquals(SeedCatalogData.products.size, repository.products.first().size)
+        assertTrue(repository.userProfile.first().isLoggedIn)
+    }
+
+    @Test
+    fun `all flagship sub-brands across manufacturers resolve to https non-svg internet urls`() = runTest {
+        repository.ensureSeeded()
+        val brandMap = repository.brands.first().associateBy { it.id }
+        val products = repository.products.first()
+
+        val flagshipSubBrands = listOf(
+            "Surf Excel" to "brand_hul",
+            "Horlicks" to "brand_hul",
+            "Lakmé" to "brand_hul",
+            "Tata Tea Gold" to "brand_tata",
+            "Tata Sampann" to "brand_tata",
+            "Croma Tech" to "brand_tata",
+            "Aashirvaad" to "brand_itc",
+            "Sunfeast YiPPee!" to "brand_itc",
+            "Bingo!" to "brand_itc",
+            "MAGGI" to "brand_nestle",
+            "KitKat" to "brand_nestle",
+            "Cadbury" to "brand_mondelez",
+            "Oreo" to "brand_mondelez",
+            "Pampers" to "brand_pg",
+            "Tide" to "brand_pg",
+            "Lay's" to "brand_pepsico",
+            "Tropicana" to "brand_varun",
+            "Harpic" to "brand_reckitt",
+            "Lizol" to "brand_reckitt",
+            "Saffola" to "brand_marico",
+            "Good Day" to "brand_britannia",
+            "Amul Taaza & Kool" to "brand_amul",
+            "Colgate" to "brand_colgate",
+            "Ferrero Rocher" to "brand_ferrero",
+            "Ghadi" to "brand_rspl",
+            "Parle-G" to "brand_parle",
+            "Fortune" to "brand_adani",
+            "Glucon-D" to "brand_zydus",
+            "Haldiram's Namkeen" to "brand_haldiram",
+            "Kellogg's Corn Flakes" to "brand_kellogg",
+            "Bajaj Almond Drops" to "brand_bajaj"
+        )
+
+        flagshipSubBrands.forEach { (subBrand, brandId) ->
+            val parent = brandMap.getValue(brandId)
+            val resolved = com.example.ui.components.resolveSubBrandLogoUrl(subBrand, parent.logoUrl)
+            assertTrue("Expected https URL for $subBrand, got $resolved", resolved.startsWith("https://"))
+            assertFalse("Must never resolve to .svg for $subBrand", resolved.contains(".svg", ignoreCase = true))
+        }
+
+        // Every seeded product has a valid non-svg brand/sub-brand logo URL
+        products.forEach { prod ->
+            val parent = brandMap[prod.brandId]
+            val resolved = com.example.ui.components.resolveSubBrandLogoUrl(prod.subBrand, parent?.logoUrl.orEmpty())
+            assertTrue("Expected https logo URL for ${prod.name}", resolved.startsWith("https://"))
+            assertFalse("Unexpected svg URL for ${prod.name}", resolved.contains(".svg", ignoreCase = true))
+        }
+    }
+
+    @Test
+    fun `past orders shelf tabs each contain multiple products for 2-row horizontal scroll`() = runTest {
+        repository.ensureSeeded()
+        val products = repository.products.first()
+
+        val groups = com.example.data.local.ShopCategoryTaxonomy.groups
+        org.junit.Assert.assertEquals(16, groups.size)
+
+        groups.forEach { group ->
+            val matched = products.filter { it.shopCategory == group.title }
+            assertTrue(
+                "Expected at least 8 products (4+ two-row columns) for Past Orders category '${group.title}', found ${matched.size}",
+                matched.size >= 8
+            )
+        }
+    }
+
+    @Test
+    fun `MainActivity launches and renders without runtime crashes`() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                assertFalse(activity.isFinishing)
+            }
+            scenario.recreate()
+            scenario.onActivity { activity ->
+                assertFalse(activity.isFinishing)
+            }
+        }
     }
 }

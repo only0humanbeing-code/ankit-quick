@@ -20,7 +20,7 @@ import androidx.room.TypeConverters
         NotifySubscriptionEntity::class,
         SavedForLaterEntity::class
     ],
-    version = 9,
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -43,6 +43,7 @@ abstract class QuickKartDatabase : RoomDatabase() {
                     "quickkart_local.db"
                 )
                     .fallbackToDestructiveMigration(dropAllTables = true)
+                    .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                     .build()
                     .also { INSTANCE = it }
             }

@@ -42,8 +42,14 @@ interface ProductDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<ProductEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAllIgnore(items: List<ProductEntity>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(item: ProductEntity)
+
+    @Query("UPDATE products SET shop_category = :shopCategory, sub_category = :subCategory WHERE id = :id")
+    suspend fun updateTaxonomy(id: String, shopCategory: String, subCategory: String)
 
     @Query("DELETE FROM products WHERE id = :id")
     suspend fun deleteById(id: String)

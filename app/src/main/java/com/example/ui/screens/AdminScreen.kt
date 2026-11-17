@@ -71,6 +71,7 @@ import com.example.model.ProductVariant
 import com.example.model.StoreConfig
 import com.example.ui.components.BrandVisualIcon
 import com.example.ui.components.ProductVisual
+import com.example.ui.components.resolveSubBrandLogoUrl
 import com.example.ui.theme.QuickGreen
 import com.example.ui.theme.QuickGreenContainer
 import com.example.ui.theme.QuickGreenDark
@@ -338,10 +339,15 @@ private fun AdminProductsTab(
                             .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val prodBrand = brandMap[prod.brandId]
                         ProductVisual(
                             imageKey = prod.imageKey,
                             colorHex = prod.colorHex,
                             iconSize = 24.dp,
+                            imageUrl = prod.imageUrl,
+                            brandName = prod.subBrand.ifBlank { prodBrand?.name.orEmpty() },
+                            brandLogoUrl = resolveSubBrandLogoUrl(prod.subBrand, prodBrand?.logoUrl.orEmpty()),
+                            brandColorHex = prodBrand?.colorHex ?: 0xFF0C831FL,
                             modifier = Modifier.size(50.dp)
                         )
                         Spacer(Modifier.width(10.dp))

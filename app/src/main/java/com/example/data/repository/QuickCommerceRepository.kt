@@ -148,10 +148,34 @@ class RoomQuickCommerceRepository(
             storeOpsDao.upsertUserProfile(SeedCatalogData.defaultUserProfile.toEntity())
             storeOpsDao.insertOrders(SeedCatalogData.sampleOrders.map { it.toEntity() })
         } else {
-            val existingIds = productDao.observeAll().first().map { it.id }.toSet()
-            val missingProducts = SeedCatalogData.products.filter { it.id !in existingIds }
+            categoryDao.insertAllIgnore(SeedCatalogData.categories.map { it.toEntity() })
+            brandDao.insertAllIgnore(SeedCatalogData.brands.map { it.toEntity() })
+            val existingProducts = productDao.observeAll().first()
+            val existingById = existingProducts.associateBy { it.id }
+            val missingProducts = SeedCatalogData.products.filter { it.id !in existingById }
             if (missingProducts.isNotEmpty()) {
-                productDao.insertAll(missingProducts.map { it.toEntity() })
+                productDao.insertAllIgnore(missingProducts.map { it.toEntity() })
+            }
+            // Keep renamed Shop By Category titles & subcategories in sync on existing databases
+            SeedCatalogData.products.forEach { seedProd ->
+                val current = existingById[seedProd.id]
+                if (current != null &&
+                    (current.shopCategory != seedProd.shopCategory || current.subCategory != seedProd.subCategory)
+                ) {
+                    productDao.updateTaxonomy(seedProd.id, seedProd.shopCategory, seedProd.subCategory)
+                }
+            }
+            if (storeOpsDao.observeAddresses().first().isEmpty()) {
+                storeOpsDao.insertAddresses(SeedCatalogData.defaultAddresses.map { it.toEntity() })
+            }
+            if (storeOpsDao.observeDeliverySlots().first().isEmpty()) {
+                storeOpsDao.insertDeliverySlots(SeedCatalogData.defaultDeliverySlots.map { it.toEntity() })
+            }
+            if (storeOpsDao.observeStoreConfig().first() == null) {
+                storeOpsDao.upsertStoreConfig(SeedCatalogData.defaultStoreConfig.toEntity())
+            }
+            if (storeOpsDao.observeUserProfile().first() == null) {
+                storeOpsDao.upsertUserProfile(SeedCatalogData.defaultUserProfile.toEntity())
             }
         }
     }

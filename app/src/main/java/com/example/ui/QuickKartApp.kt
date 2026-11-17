@@ -97,6 +97,7 @@ import com.example.ui.screens.OrdersScreen
 import com.example.ui.screens.ProductDetailScreen
 import com.example.ui.screens.ProductListScreen
 import com.example.ui.screens.ShopByCategoryScreen
+import com.example.ui.screens.ShopByManufacturerScreen
 import com.example.ui.theme.QuickGreen
 import com.example.ui.theme.QuickGreenContainer
 import com.example.ui.theme.QuickMuted
@@ -107,6 +108,7 @@ import kotlinx.coroutines.flow.collectLatest
 object QuickKartRoutes {
     const val HOME = "home"
     const val CATEGORIES = "categories"
+    const val MANUFACTURERS = "manufacturers"
     const val CATALOG = "catalog"
     const val ORDERS = "orders"
     const val CART = "cart"
@@ -212,6 +214,7 @@ fun QuickKartApp(viewModel: QuickKartViewModel) {
     val showBottomBar = currentRoute in setOf(
         QuickKartRoutes.HOME,
         QuickKartRoutes.CATEGORIES,
+        QuickKartRoutes.MANUFACTURERS,
         QuickKartRoutes.CATALOG,
         QuickKartRoutes.MANUFACTURER_BRANDS,
         QuickKartRoutes.BRAND_PRODUCTS,
@@ -224,6 +227,7 @@ fun QuickKartApp(viewModel: QuickKartViewModel) {
     val showFloatingCartBanner = currentRoute in setOf(
         QuickKartRoutes.HOME,
         QuickKartRoutes.CATEGORIES,
+        QuickKartRoutes.MANUFACTURERS,
         QuickKartRoutes.CATALOG,
         QuickKartRoutes.MANUFACTURER_BRANDS,
         QuickKartRoutes.BRAND_PRODUCTS,
@@ -233,10 +237,18 @@ fun QuickKartApp(viewModel: QuickKartViewModel) {
     val activeAddress: SavedAddress? = addresses.firstOrNull { it.isDefault } ?: addresses.firstOrNull()
 
     fun navigateTopTab(route: String) {
+        if (route == QuickKartRoutes.HOME) {
+            val popped = navController.popBackStack(QuickKartRoutes.HOME, inclusive = false)
+            if (!popped && currentRoute != QuickKartRoutes.HOME) {
+                navController.navigate(QuickKartRoutes.HOME) {
+                    launchSingleTop = true
+                }
+            }
+            return
+        }
         navController.navigate(route) {
-            popUpTo(QuickKartRoutes.HOME) { saveState = true }
+            popUpTo(QuickKartRoutes.HOME) { saveState = false }
             launchSingleTop = true
-            restoreState = true
         }
     }
 
@@ -435,6 +447,54 @@ fun QuickKartApp(viewModel: QuickKartViewModel) {
                     onViewAllProducts = {
                         viewModel.resetFiltersCompletely()
                         navController.navigate(QuickKartRoutes.CATALOG)
+                    },
+                    userName = userProfile.name,
+                    savedCount = savedProductIds.size,
+                    onSavedItemsClick = { navigateTopTab(QuickKartRoutes.ACCOUNT) },
+                    products = products,
+                    orders = orders,
+                    cartItems = cartItems,
+                    onProductClick = { prod ->
+                        navController.navigate(QuickKartRoutes.productDetail(prod.id))
+                    },
+                    onAddClick = { prod -> viewModel.addOrIncrementCart(prod) },
+                    onIncrementClick = { prod -> viewModel.addOrIncrementCart(prod) },
+                    onDecrementClick = { prod -> viewModel.decrementCart(prod.id, prod.defaultVariant.id) },
+                    onSeeAllManufacturersClick = { navController.navigate(QuickKartRoutes.MANUFACTURERS) },
+                    onSubBrandDirectClick = { brandId, subBrand ->
+                        viewModel.selectSubBrandFilter(brandId, subBrand)
+                        navController.navigate(QuickKartRoutes.brandProducts(brandId, subBrand))
+                    },
+                    onCompanyAllProductsClick = { brand ->
+                        viewModel.selectSubBrandFilter(brand.id, null)
+                        navController.navigate(QuickKartRoutes.brandProducts(brand.id, null))
+                    },
+                    onSearchProductQuery = { query ->
+                        viewModel.resetFiltersCompletely()
+                        viewModel.updateSearchQuery(query)
+                        navController.navigate(QuickKartRoutes.CATALOG)
+                    }
+                )
+            }
+
+            composable(QuickKartRoutes.MANUFACTURERS) {
+                ShopByManufacturerScreen(
+                    brands = brands,
+                    products = products,
+                    onBackClick = { navController.popBackStack() },
+                    onManufacturerClick = { brand ->
+                        navController.navigate(QuickKartRoutes.manufacturerBrands(brand.id))
+                    },
+                    onViewCompanyAllProducts = { brand ->
+                        viewModel.selectSubBrandFilter(brand.id, null)
+                        navController.navigate(QuickKartRoutes.brandProducts(brand.id, null))
+                    },
+                    onSubBrandClick = { brandId, subBrandName ->
+                        viewModel.selectSubBrandFilter(brandId, subBrandName)
+                        navController.navigate(QuickKartRoutes.brandProducts(brandId, subBrandName))
+                    },
+                    onProductClick = { prod ->
+                        navController.navigate(QuickKartRoutes.productDetail(prod.id))
                     }
                 )
             }
@@ -502,6 +562,8 @@ fun QuickKartApp(viewModel: QuickKartViewModel) {
                     ManufacturerBrandsScreen(
                         manufacturer = manufacturer,
                         productsForManufacturer = mfgProducts,
+                        cartItems = cartItems,
+                        notifyProductIds = notifyProductIds,
                         onBackClick = { navController.popBackStack() },
                         onSearchClick = {
                             viewModel.selectBrandFilter(brandId)
@@ -515,6 +577,13 @@ fun QuickKartApp(viewModel: QuickKartViewModel) {
                             viewModel.selectSubBrandFilter(brandId, null)
                             navController.navigate(QuickKartRoutes.brandProducts(brandId, null))
                         },
+                        onProductClick = { prod ->
+                            navController.navigate(QuickKartRoutes.productDetail(prod.id))
+                        },
+                        onAddClick = { prod, vid -> viewModel.addOrIncrementCart(prod, vid) },
+                        onIncrementClick = { prod, vid -> viewModel.addOrIncrementCart(prod, vid) },
+                        onDecrementClick = { prod, vid -> viewModel.decrementCart(prod.id, vid) },
+                        onNotifyClick = { prod -> viewModel.toggleNotifyMe(prod.id, prod.name) },
                         modifier = standardScreenModifier
                     )
                 }
@@ -727,6 +796,7 @@ fun QuickKartApp(viewModel: QuickKartViewModel) {
                 CartScreen(
                     cartSummary = cartSummary,
                     storeConfig = storeConfig,
+                    brands = brands,
                     onIncrement = { pid, vid ->
                         products.firstOrNull { it.id == pid }?.let { prod ->
                             viewModel.addOrIncrementCart(prod, vid)

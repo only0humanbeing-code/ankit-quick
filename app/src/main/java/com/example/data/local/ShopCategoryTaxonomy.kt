@@ -11,19 +11,20 @@ data class ShopCategoryGroup(
 )
 
 /**
- * Complete 12-department Shop By Category accordion hierarchy matching the reference catalog.
+ * Complete 16-department Shop By Category accordion hierarchy.
  */
 object ShopCategoryTaxonomy {
 
     val groups: List<ShopCategoryGroup> = listOf(
         ShopCategoryGroup(
             id = "shop_electronics",
-            title = "Electronics",
+            title = "Electronic Appliances, Home & Kitchen Essentials",
             iconKey = "electronics",
-            allOptionLabel = "All Electronics",
+            allOptionLabel = "All Electronic Appliances, Home & Kitchen Essentials",
             subcategories = listOf(
                 "Audio devices",
                 "Electrical Accessories",
+                "Home & Kitchen Appliances",
                 "Personal Care & Grooming",
                 "Smart Wearables"
             )
@@ -61,15 +62,16 @@ object ShopCategoryTaxonomy {
         ),
         ShopCategoryGroup(
             id = "shop_bakery_dairy",
-            title = "Bakery, Cakes & Dairy",
+            title = "Bakery, Cake, Dairy & Fresh, Frozen",
             iconKey = "bakery_dairy",
-            allOptionLabel = "All Bakery, Cakes & Dairy",
+            allOptionLabel = "All Bakery, Cake, Dairy & Fresh, Frozen",
             subcategories = listOf(
                 "Bakery Snacks",
                 "Breads & Buns",
                 "Cakes & Pastries",
                 "Cookies, Rusk & Khari",
                 "Dairy",
+                "Fresh & Frozen",
                 "Non Dairy"
             )
         ),
@@ -106,12 +108,11 @@ object ShopCategoryTaxonomy {
         ),
         ShopCategoryGroup(
             id = "shop_beauty_hygiene",
-            title = "Beauty & Hygiene",
+            title = "Body Care & Beauty",
             iconKey = "beauty_hygiene",
-            allOptionLabel = "All Beauty & Hygiene",
+            allOptionLabel = "All Body Care & Beauty",
             subcategories = listOf(
                 "Bath & Hand Wash",
-                "Feminine Hygiene",
                 "Fragrances & Deos",
                 "Hair Care",
                 "Health & Medicine",
@@ -181,17 +182,90 @@ object ShopCategoryTaxonomy {
         ),
         ShopCategoryGroup(
             id = "shop_baby_care",
-            title = "Baby Care",
+            title = "Baby Care, Female & Hygiene",
             iconKey = "baby_care",
-            allOptionLabel = "All Baby Care",
+            allOptionLabel = "All Baby Care, Female & Hygiene",
             subcategories = listOf(
                 "Baby Accessories",
                 "Baby Bath & Hygiene",
                 "Baby Food & Formula",
-                "Diapers & Wipes"
+                "Diapers & Wipes",
+                "Feminine Hygiene"
+            )
+        ),
+        ShopCategoryGroup(
+            id = "shop_stationery_toys_gifts",
+            title = "Stationery, Toys & Gifts",
+            iconKey = "stationery_toys_gifts",
+            allOptionLabel = "All Stationery, Toys & Gifts",
+            subcategories = listOf(
+                "Gift Hampers & Wrapping",
+                "Notebooks, Pens & School Supplies",
+                "Office & Art Stationery",
+                "Toys, Games & Puzzles"
+            )
+        ),
+        ShopCategoryGroup(
+            id = "shop_paper_disposables",
+            title = "Paper Goods & Disposables",
+            iconKey = "paper_disposables",
+            allOptionLabel = "All Paper Goods & Disposables",
+            subcategories = listOf(
+                "Aluminium Foil & Food Wraps",
+                "Garbage Bags & Bin Liners",
+                "Paper Plates, Cups & Cutlery",
+                "Tissues, Napkins & Kitchen Rolls"
+            )
+        ),
+        ShopCategoryGroup(
+            id = "shop_industrial_catering",
+            title = "Industrial & Catering",
+            iconKey = "industrial_catering",
+            allOptionLabel = "All Industrial & Catering",
+            subcategories = listOf(
+                "Bulk HoReCa Oils & Staples",
+                "Catering Containers & Packaging",
+                "Commercial Sauces & Seasonings",
+                "Institutional Cleaning & Hygiene"
+            )
+        ),
+        ShopCategoryGroup(
+            id = "shop_ayurveda_wellness",
+            title = "Ayurveda, Health & Wellness",
+            iconKey = "ayurveda_wellness",
+            allOptionLabel = "All Ayurveda, Health & Wellness",
+            subcategories = listOf(
+                "Ayurvedic Juices & Tonics",
+                "Chyawanprash & Immunity",
+                "Herbal Supplements & Digestives",
+                "Pain Relief & First Aid"
             )
         )
     )
+
+    private val searchAliasesByGroupId: Map<String, List<String>> = mapOf(
+        "shop_electronics" to listOf("electronics", "electronic appliances", "appliances", "home & kitchen essentials"),
+        "shop_bakery_dairy" to listOf("bakery", "cake", "cakes", "dairy", "fresh", "frozen", "ice cream"),
+        "shop_beauty_hygiene" to listOf("body care", "beauty", "beauty & hygiene", "skin", "hair"),
+        "shop_baby_care" to listOf("baby care", "female", "feminine", "hygiene", "diapers"),
+        "shop_stationery_toys_gifts" to listOf("stationary", "stationery", "toys", "gifts", "school", "pens"),
+        "shop_paper_disposables" to listOf("paper goods", "disposable", "disposables", "tissues", "napkins", "plates", "foil"),
+        "shop_industrial_catering" to listOf("industrial", "catering", "cattering", "horeca", "bulk", "commercial"),
+        "shop_ayurveda_wellness" to listOf("ayurveda", "ayurvedic", "health", "wellness", "chyawanprash", "herbal", "immunity")
+    )
+
+    fun matchesQuery(group: ShopCategoryGroup, rawQuery: String): Boolean {
+        val q = rawQuery.trim().lowercase()
+        if (q.isEmpty()) return true
+        val normalizedTitle = group.title.lowercase().replace(",", "")
+        val normalizedQuery = q.replace(",", "").replace(Regex("\\s+"), " ")
+        return group.title.lowercase().contains(q) ||
+            normalizedTitle.contains(normalizedQuery) ||
+            group.subcategories.any { it.lowercase().contains(q) } ||
+            searchAliasesByGroupId[group.id].orEmpty().any { alias ->
+                alias.contains(q) || normalizedQuery.contains(alias)
+            }
+    }
 
     private val leafFiltersBySubCategory: Map<String, List<String>> = mapOf(
         "Dals & Pulses" to listOf(

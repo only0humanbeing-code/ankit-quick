@@ -58,6 +58,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -266,10 +267,22 @@ fun ProductVisual(
                 modifier = Modifier.fillMaxSize(),
                 minIntrinsicPx = 64f
             ) {
-                ProductPackagingArtwork(spec = spec, iconSize = iconSize, imageKey = imageKey)
+                ProductPackagingArtwork(
+                    spec = spec,
+                    iconSize = iconSize,
+                    imageKey = imageKey,
+                    brandName = brandName,
+                    brandLogoUrl = brandLogoUrl
+                )
             }
         } else {
-            ProductPackagingArtwork(spec = spec, iconSize = iconSize, imageKey = imageKey)
+            ProductPackagingArtwork(
+                spec = spec,
+                iconSize = iconSize,
+                imageKey = imageKey,
+                brandName = brandName,
+                brandLogoUrl = brandLogoUrl
+            )
         }
 
         if (brandName.isNotBlank() && !showTag) {
@@ -306,7 +319,9 @@ fun ProductVisual(
 private fun ProductPackagingArtwork(
     spec: VisualSpec,
     iconSize: Dp,
-    imageKey: String
+    imageKey: String,
+    brandName: String = "",
+    brandLogoUrl: String = ""
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -506,20 +521,43 @@ private fun ProductPackagingArtwork(
             }
         }
 
-        // Centered crisp badge icon inside packaging artwork
+        // Centered crisp badge icon or authentic embedded brand logo on packaging artwork
         Surface(
             shape = CircleShape,
-            color = Color.White.copy(alpha = 0.94f),
+            color = Color.White.copy(alpha = 0.96f),
+            border = BorderStroke(0.8.dp, spec.accent.copy(alpha = 0.25f)),
             shadowElevation = 2.dp,
-            modifier = Modifier.size((iconSize * 0.88f).coerceAtLeast(30.dp))
+            modifier = Modifier.size((iconSize * 0.92f).coerceAtLeast(30.dp))
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = spec.icon,
-                    contentDescription = imageKey,
-                    tint = spec.accent,
-                    modifier = Modifier.size((iconSize * 0.56f).coerceAtLeast(18.dp))
-                )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(4.dp)
+            ) {
+                if (spec.shape != PackagingShape.PRODUCE && brandLogoUrl.isNotBlank()) {
+                    CrispInternetLogoImage(
+                        url = brandLogoUrl,
+                        contentDescription = brandName.ifBlank { imageKey },
+                        contentScale = ContentScale.Fit,
+                        minIntrinsicPx = 48f,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = spec.icon,
+                            contentDescription = imageKey,
+                            tint = spec.accent,
+                            modifier = Modifier.size((iconSize * 0.56f).coerceAtLeast(18.dp))
+                        )
+                    }
+                } else {
+                    Icon(
+                        imageVector = spec.icon,
+                        contentDescription = imageKey,
+                        tint = spec.accent,
+                        modifier = Modifier.size((iconSize * 0.56f).coerceAtLeast(18.dp))
+                    )
+                }
             }
         }
     }
@@ -651,20 +689,25 @@ fun CrispInternetLogoImage(
     minIntrinsicPx: Float = 64f,
     fallback: @Composable () -> Unit
 ) {
-    if (url.isBlank()) {
+    if (url.isBlank() || url.contains(".svg", ignoreCase = true)) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) { fallback() }
         return
     }
     val context = LocalContext.current
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(context)
+    val imageRequest = remember(context, url) {
+        ImageRequest.Builder(context)
             .data(url)
+            .size(256)
+            .allowHardware(true)
             .addHeader("User-Agent", "QuickKartAndroid/1.0 (https://quickkart.in)")
             .crossfade(true)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .build(),
-        filterQuality = FilterQuality.High
+            .build()
+    }
+    val painter = rememberAsyncImagePainter(
+        model = imageRequest,
+        filterQuality = FilterQuality.Medium
     )
     val state = painter.state
     val isSharpLoaded = state is AsyncImagePainter.State.Success &&
@@ -1199,43 +1242,1469 @@ fun BrandCustomEmblemFallback(
     }
 }
 
+private fun subBrandFaviconPng(domain: String): String =
+    "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://$domain&size=256"
+
 fun resolveSubBrandLogoUrl(subBrandName: String, manufacturerLogoUrl: String): String {
-    val key = subBrandName.lowercase()
+    val key = subBrandName.trim().lowercase()
+    if (key.isBlank()) return manufacturerLogoUrl
+
+    // High-resolution verified Wikimedia PNG wordmarks where available
     val wikiFile = when {
         "kissan" in key -> "Kissan_logo.png"
-        "horlicks" in key -> "Horlicks_logo.svg"
-        "lifebuoy" in key -> "Lifebuoy_logo.svg"
-        "lux" in key -> "Lux_logo.svg"
-        "surf excel" in key -> "Surf_Excel_logo.png"
-        "dettol" in key -> "Dettol_logo.svg"
-        "harpic" in key -> "Harpic_logo.svg"
-        "lizol" in key -> "Lizol_logo.png"
-        "aashirvaad" in key -> "Aashirvaad_Logo.png"
-        "sunfeast" in key -> "Sunfeast_logo.png"
-        "cadbury" in key -> "Cadbury_Logo_2020.svg"
-        "oreo" in key -> "Oreo_logo.svg"
-        "bournvita" in key -> "Bournvita_logo.png"
-        "maggi" in key -> "Maggi_logo.svg"
-        "nescafe" in key -> "Nescafe_logo.svg"
-        "kitkat" in key -> "KitKat_logo.svg"
-        "lay's" in key || "lays" in key -> "Lays_brand_logo.png"
-        "kurkure" in key -> "Kurkure_logo.png"
-        "quaker" in key -> "Quaker_Oats_logo.svg"
-        "tropicana" in key -> "Tropicana_logo.svg"
-        "saffola" in key -> "Saffola_logo.png"
-        "colgate" in key -> "Colgate_logo.svg"
-        "ferrero rocher" in key -> "Ferrero_Rocher_logo.svg"
-        "nutella" in key -> "Nutella_logo.svg"
-        "fortune" in key -> "Fortune_Oils_Logo.png"
-        "amul" in key -> "Amul_official_logo.svg"
-        "dabur" in key || "real" in key || "gulabari" in key || "odonil" in key -> "Dabur_Logo.svg"
-        "britannia" in key || "good day" in key || "bourbon" in key || "nutrichoice" in key || "toastea" in key -> "Britannia_Industries_logo.svg"
-        "haldiram" in key -> "Haldiram's_Logo_SVG.svg"
-        "kellogg" in key || "chocos" in key -> "Kellogg's-Logo.svg"
-        "parle" in key -> "Parle_Products_logo.svg"
+        key == "dove" -> "Dove_logo.png"
+        "lifebuoy" in key -> "Logo_Lifebuoy.png"
+        key == "dettol" -> "Dettol_brand_wordmark.png"
+        key == "doritos" -> "Logo_Doritos.png"
+        key == "quaker" -> "Quaker_oats_textlogo.png"
+        else -> null
+    }
+    if (wikiFile != null) {
+        return "https://commons.wikimedia.org/wiki/Special:FilePath/$wikiFile?width=256"
+    }
+
+    // Official brand domain 256px PNGs (fast CDN, native PNG — never SVG)
+    val brandDomain = when {
+        // Hindustan Unilever sub-brands
+        "surf excel" in key -> "www.surfexcel.in"
+        "horlicks" in key -> "www.horlicks.in"
+        "lakm" in key -> "www.lakmeindia.com"
+        "pond" in key -> "www.ponds.in"
+        key == "vaseline" -> "www.vaseline.com"
+        key == "lipton" -> "www.lipton.com"
+        key == "knorr" -> "www.knorr.com"
+        "tresemm" in key -> "www.tresemme.com"
+        key == "axe" -> "www.axe.com"
+        "rexona" in key -> "www.rexona.com"
+        "hellmann" in key -> "www.hellmanns.com"
+        "close up" in key || key == "closeup" -> "www.closeup.com"
+        "pepsodent" in key -> "www.pepsodent.in"
+        "sunsilk" in key -> "www.sunsilk.in"
+        "glow & lovely" in key -> "www.glowandlovelycareers.in"
+        "clinic plus" in key -> "www.clinicplus.in"
+        "domex" in key -> "www.domex.in"
+        "brook" in key || "red label" in key || "taj mahal" in key || key == "bru" ||
+            key == "vim" || key == "rin" || key == "comfort" || key == "wheel" ||
+            key == "boost" || key == "pears" || "indulekha" in key ||
+            key == "sunlight" || "lever ayush" in key -> "www.hul.co.in"
+
+        // Tata Consumer & Croma
+        "tetley" in key -> "www.tetley.in"
+        "soulfull" in key -> "www.tatasoulfull.com"
+        "croma" in key -> "www.croma.com"
+        "tata" in key || "himalayan" in key -> "www.tataconsumer.com"
+
+        // ITC Limited sub-brands
+        "aashirvaad" in key -> "www.aashirvaad.com"
+        "sunfeast" in key || "yippee" in key -> "www.sunfeastworld.com"
+        "bingo" in key -> "www.bingosnacks.com"
+        "classmate" in key -> "www.classmateshop.com"
+        "savlon" in key -> "www.savlon.in"
+        "vivel" in key || "fiama" in key || "engage" in key || "candyman" in key ||
+            "b natural" in key || "nimyle" in key || "mangaldeep" in key ||
+            "itc " in key -> "www.itcstore.in"
+
+        // Nestle sub-brands
+        "maggi" in key -> "www.maggi.in"
+        "nescafe" in key -> "www.nescafe.com"
+        "kitkat" in key -> "www.kitkat.com"
+        "nestea" in key || "nestle" in key -> "www.nestle.in"
+
+        // Mondelez sub-brands
+        "cadbury" in key -> "www.cadbury.co.uk"
+        "oreo" in key -> "www.oreo.com"
+        "bournvita" in key -> "www.mondelezinternational.com"
+
+        // Procter & Gamble sub-brands
+        "pampers" in key -> "www.pampers.com"
+        "whisper" in key -> "www.whisper.co.in"
+        "tide" in key -> "www.tide.com"
+        "ariel" in key -> "www.ariel.in"
+
+        // PepsiCo & Varun Beverages
+        "lay's" in key || key == "lays" -> "www.lays.com"
+        "tropicana" in key -> "www.tropicana.com"
+        "aquafina" in key -> "www.aquafina.com"
+        "kurkure" in key || "uncle chipps" in key || "sting" in key -> "www.pepsicoindia.co.in"
+
+        // Reckitt Benckiser
+        "durex" in key -> "www.durexindia.com"
+        "harpic" in key || "lizol" in key || "veet" in key || "moov" in key ||
+            "colin" in key || "vanish" in key || "airwick" in key ||
+            "cherry blossom" in key -> "www.reckitt.com"
+
+        // Dabur
+        key == "real" -> "www.realfruitpower.com"
+        "odonil" in key || "odopic" in key || "gulabari" in key ||
+            "dabur" in key -> "www.dabur.com"
+
+        // Godrej
+        "good knight" in key || "godrej" in key || key == "hit" -> "www.godrejcp.com"
+
+        // Marico
+        "saffola" in key -> "www.saffolalife.com"
+        "parachute" in key || "hair & care" in key || "set wet" in key ||
+            key == "livon" -> "www.marico.com"
+
+        // Britannia
+        "good day" in key || "bourbon" in key || "nutrichoice" in key ||
+            "toastea" in key || "britannia" in key -> "www.britannia.co.in"
+
+        // Amul
+        "amul" in key -> "www.amul.com"
+
+        // Colgate Palmolive
+        "colgate" in key -> "www.colgate.com"
+        "palmolive" in key -> "www.palmolive.com"
+
+        // Ferrero
+        "ferrero" in key -> "www.ferrerorocher.com"
+        "nutella" in key -> "www.nutella.com"
+
+        // RSPL
+        key == "ghadi" -> "www.ghadi.in"
+        key == "xpert" -> "www.rspl.in"
+
+        // Parle
+        "parle" in key || "hide & seek" in key || "monaco" in key -> "www.parleproducts.com"
+
+        // Adani Wilmar
+        "fortune" in key -> "www.fortunefoods.com"
+
+        // Zydus Wellness
+        "sugar free" in key || "glucon-d" in key || "nutralite" in key -> "www.zyduswellness.com"
+
+        // Haldiram's, Kellogg's, Bajaj
+        "haldiram" in key -> "www.haldirams.com"
+        "kellogg" in key -> "www.kelloggs.com"
+        "bajaj" in key -> "www.bajajconsumercare.com"
+
         else -> return manufacturerLogoUrl
     }
-    return "https://commons.wikimedia.org/wiki/Special:FilePath/$wikiFile?width=360"
+    return subBrandFaviconPng(brandDomain)
+}
+
+@Composable
+fun SubBrandVisualCard(
+    subBrandName: String,
+    manufacturer: Brand,
+    modifier: Modifier = Modifier
+) {
+    val accentColor = Color(manufacturer.colorHex)
+    val directLogoUrl = resolveSubBrandLogoUrl(subBrandName, "")
+
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(1f),
+        shape = RoundedCornerShape(12.dp),
+        color = Color(0xFFFDF5EE),
+        border = BorderStroke(0.6.dp, Color(0xFFF3E4D3)),
+        shadowElevation = 0.dp
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(5.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (directLogoUrl.isNotBlank()) {
+                CrispInternetLogoImage(
+                    url = directLogoUrl,
+                    contentDescription = "$subBrandName brand logo",
+                    contentScale = ContentScale.Fit,
+                    minIntrinsicPx = 48f,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    SubBrandWordmarkEmblem(
+                        subBrandName = subBrandName,
+                        fallbackColor = accentColor
+                    )
+                }
+            } else {
+                SubBrandWordmarkEmblem(
+                    subBrandName = subBrandName,
+                    fallbackColor = accentColor
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SubBrandWordmarkEmblem(
+    subBrandName: String,
+    fallbackColor: Color
+) {
+    val key = subBrandName.trim().lowercase()
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        when {
+            "surf excel" in key -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Surface(color = Color(0xFFEC4899), shape = CircleShape) {
+                        Text(
+                            text = "Surf",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Black,
+                            fontStyle = FontStyle.Italic,
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 1.dp)
+                        )
+                    }
+                    Text(
+                        text = "excel",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFF1D4ED8)
+                    )
+                }
+            }
+            key == "vim" -> {
+                Surface(
+                    color = Color(0xFF16A34A),
+                    shape = CircleShape,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "Vim",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Black,
+                            fontStyle = FontStyle.Italic,
+                            color = Color(0xFFFACC15)
+                        )
+                    }
+                }
+            }
+            key == "rin" -> {
+                Surface(
+                    color = Color(0xFF0057B8),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "Rin",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "dove" -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Dove",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Serif,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFF1E3A8A)
+                    )
+                    Box(
+                        Modifier
+                            .width(22.dp)
+                            .height(2.5.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFD97706))
+                    )
+                }
+            }
+            "kissan" in key -> {
+                Surface(color = Color(0xFFD91E2A), shape = RoundedCornerShape(6.dp)) {
+                    Text(
+                        text = "kissan",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "bru" -> {
+                Surface(color = Color(0xFF166534), shape = CircleShape) {
+                    Text(
+                        text = "BRU",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color(0xFFFEF08A),
+                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 7.dp)
+                    )
+                }
+            }
+            "red label" in key -> {
+                Surface(
+                    color = Color(0xFFC81E2B),
+                    shape = CircleShape,
+                    border = BorderStroke(1.2.dp, Color(0xFFF59E0B))
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                    ) {
+                        Text(
+                            text = "Red",
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontStyle = FontStyle.Italic,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "Label",
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontStyle = FontStyle.Italic,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+            "taj mahal" in key -> {
+                Surface(
+                    color = Color(0xFF1E3A8A),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.2.dp, Color(0xFFF59E0B))
+                ) {
+                    Text(
+                        text = "TAJ\nMAHAL",
+                        fontSize = 8.sp,
+                        lineHeight = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Serif,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFFDE68A),
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "indulekha" in key -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box(
+                        Modifier
+                            .size(14.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF15803D))
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = "indulekha",
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF3F2E26)
+                    )
+                }
+            }
+            key == "comfort" -> {
+                Text(
+                    text = "Comfort",
+                    fontSize = 11.5.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF1D4ED8)
+                )
+            }
+            key == "wheel" -> {
+                Surface(color = Color(0xFF16A34A), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "Wheel",
+                        fontSize = 11.5.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "lifebuoy" in key -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Lifebuoy",
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "boost" -> {
+                Surface(color = Color(0xFFEA580C), shape = RoundedCornerShape(6.dp)) {
+                    Text(
+                        text = "BOOST",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFFFEF08A),
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "lux" -> {
+                Text(
+                    text = "LUX",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Serif,
+                    color = Color(0xFFB48332),
+                    letterSpacing = 1.sp
+                )
+            }
+            key == "pears" -> {
+                Text(
+                    text = "Pears",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Serif,
+                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF6B3E26)
+                )
+            }
+            "horlicks" in key -> {
+                Surface(
+                    color = Color.White,
+                    shape = RoundedCornerShape(6.dp),
+                    border = BorderStroke(1.2.dp, Color(0xFF1E3A8A))
+                ) {
+                    Text(
+                        text = "Horlicks",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFF1E3A8A),
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp)
+                    )
+                }
+            }
+            "glow & lovely" in key -> {
+                Text(
+                    text = "Glow&\nLovely",
+                    fontSize = 10.sp,
+                    lineHeight = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center,
+                    color = Color(0xFFBE185D)
+                )
+            }
+            "clinic plus" in key -> {
+                Text(
+                    text = "CLINIC\nPLUS+",
+                    fontSize = 10.sp,
+                    lineHeight = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = Color(0xFF0369A1)
+                )
+            }
+            "close up" in key -> {
+                Text(
+                    text = "closeup",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color(0xFFDC2626)
+                )
+            }
+            key == "domex" -> {
+                Surface(color = Color(0xFF1E3A8A), shape = RoundedCornerShape(6.dp)) {
+                    Text(
+                        text = "Domex",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "lipton" -> {
+                Surface(color = Color(0xFFFACC15), shape = CircleShape) {
+                    Text(
+                        text = "Lipton",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color(0xFFB91C1C),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "tresemm" in key -> {
+                Surface(color = Color(0xFF111827), shape = RoundedCornerShape(4.dp)) {
+                    Text(
+                        text = "TRESemmé",
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            key == "sunsilk" -> {
+                Surface(color = Color(0xFFDB2777), shape = CircleShape) {
+                    Text(
+                        text = "sunsilk",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            key == "pepsodent" -> {
+                Text(
+                    text = "Pepsodent",
+                    fontSize = 9.5.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFF1D4ED8)
+                )
+            }
+            "pond" in key -> {
+                Text(
+                    text = "POND'S",
+                    fontSize = 10.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Serif,
+                    color = Color(0xFF1F2937)
+                )
+            }
+            "lakm" in key -> {
+                Text(
+                    text = "LAKMÉ",
+                    fontSize = 11.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.6.sp,
+                    color = Color(0xFF111827)
+                )
+            }
+            key == "vaseline" -> {
+                Surface(color = Color(0xFF1E3A8A), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Vaseline",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "knorr" -> {
+                Surface(color = Color(0xFF15803D), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Knorr",
+                        fontSize = 11.5.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "tata tea" in key || "tetley" in key || "tata coffee" in key || "himalayan" in key -> {
+                val badgeBg = when {
+                    "gold" in key -> Color(0xFF111827)
+                    "agni" in key -> Color(0xFFB91C1C)
+                    "chakra" in key -> Color(0xFFDC2626)
+                    "kanan" in key -> Color(0xFF166534)
+                    "tetley" in key -> Color(0xFF0284C7)
+                    "himalayan" in key -> Color(0xFFBE185D)
+                    else -> Color(0xFF1E56A0)
+                }
+                Surface(color = badgeBg, shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = subBrandName.replace("Tata Tea ", "Tea\n"),
+                        fontSize = 8.5.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "tata salt" in key -> {
+                Surface(color = Color(0xFF451A03), shape = CircleShape) {
+                    Text(
+                        text = "TATA\nSalt",
+                        fontSize = 9.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFFDE68A),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            "tata sampann" in key -> {
+                Surface(color = Color(0xFF065F46), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "TATA\nsampann",
+                        fontSize = 8.5.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "tata soulfull" in key -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(6.dp)) {
+                    Text(
+                        text = "TATA\nSOULFULL",
+                        fontSize = 7.5.sp,
+                        lineHeight = 9.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "aashirvaad" in key -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box(
+                        Modifier
+                            .size(16.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFF59E0B))
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = "AASHIRVAAD",
+                        fontSize = 7.5.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color(0xFFDC2626)
+                    )
+                }
+            }
+            "yippee" in key -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "YiPPee!",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFFFACC15),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "sunfeast" in key -> {
+                Surface(
+                    color = Color.White,
+                    shape = CircleShape,
+                    border = BorderStroke(1.5.dp, Color(0xFFDC2626))
+                ) {
+                    Text(
+                        text = "Sunfeast",
+                        fontSize = 8.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFFDC2626),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            "bingo" in key -> {
+                Surface(
+                    color = Color(0xFFFACC15),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.4.dp, Color(0xFFDC2626))
+                ) {
+                    Text(
+                        text = "BINGO!",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFFDC2626),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "vivel" in key || "savlon" in key || "fiama" in key || "nimyle" in key || "b natural" in key || "engage" in key -> {
+                val color = when {
+                    "vivel" in key -> Color(0xFF7C3AED)
+                    "savlon" in key -> Color(0xFFEA580C)
+                    "nimyle" in key || "b natural" in key -> Color(0xFF15803D)
+                    "engage" in key -> Color(0xFF0284C7)
+                    else -> Color(0xFF111827)
+                }
+                Text(
+                    text = subBrandName,
+                    fontSize = 10.5.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center,
+                    color = color
+                )
+            }
+            key == "maggi" -> {
+                Surface(
+                    color = Color(0xFFFACC15),
+                    shape = CircleShape,
+                    border = BorderStroke(1.5.dp, Color(0xFFDC2626))
+                ) {
+                    Text(
+                        text = "Maggi",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color(0xFFDC2626),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "nescafe" in key -> {
+                Surface(
+                    color = if ("gold" in key) Color(0xFF78350F) else Color(0xFF111827),
+                    shape = RoundedCornerShape(6.dp)
+                ) {
+                    Text(
+                        text = if ("gold" in key) "NESCAFÉ\nGOLD" else "NESCAFÉ",
+                        fontSize = 8.5.sp,
+                        lineHeight = 9.5.sp,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        color = if ("gold" in key) Color(0xFFFDE68A) else Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "nestle a+" in key -> {
+                Surface(color = Color(0xFF0284C7), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Nestle\na+",
+                        fontSize = 9.5.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "nestea" -> {
+                Surface(color = Color(0xFF0284C7), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "NESTEA",
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color(0xFFFEF08A),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "kitkat" -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(10.dp)) {
+                    Text(
+                        text = "KitKat",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "dabur red" in key || "dabur amla" in key || "dabur honey" in key || "dabur" in key || key == "real" || key == "odonil" || "gulabari" in key -> {
+                val badgeBg = when {
+                    "red" in key -> Color(0xFFDC2626)
+                    key == "real" -> Color(0xFF0284C7)
+                    key == "odonil" -> Color(0xFF1D4ED8)
+                    "gulabari" in key -> Color(0xFFDB2777)
+                    "honey" in key -> Color(0xFFD97706)
+                    else -> Color(0xFF15803D)
+                }
+                Surface(color = badgeBg, shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = subBrandName.replace("Dabur ", ""),
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "harpic" -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "HARPIC",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "lizol" -> {
+                Surface(color = Color(0xFF0284C7), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "Lizol",
+                        fontSize = 11.5.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "dettol" -> {
+                Surface(
+                    color = Color(0xFF15803D),
+                    shape = CircleShape,
+                    border = BorderStroke(1.5.dp, Color.White)
+                ) {
+                    Text(
+                        text = "Dettol",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            key == "veet" -> {
+                Text(
+                    text = "Veet",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF0284C7)
+                )
+            }
+            key == "durex" -> {
+                Surface(color = Color(0xFF0284C7), shape = RoundedCornerShape(10.dp)) {
+                    Text(
+                        text = "durex",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "moov" -> {
+                Surface(color = Color(0xFF6B21A8), shape = RoundedCornerShape(6.dp)) {
+                    Text(
+                        text = "moov",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "colin" -> {
+                Text(
+                    text = "Colin",
+                    fontSize = 12.5.sp,
+                    fontWeight = FontWeight.Black,
+                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFFDC2626)
+                )
+            }
+            key == "vanish" -> {
+                Text(
+                    text = "Vanish",
+                    fontSize = 11.5.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFFDB2777)
+                )
+            }
+            key == "airwick" -> {
+                Surface(color = Color(0xFF16A34A), shape = CircleShape) {
+                    Text(
+                        text = "AIR\nWICK",
+                        fontSize = 8.sp,
+                        lineHeight = 9.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "godrej no.1" in key -> {
+                Surface(color = Color(0xFF15803D), shape = CircleShape) {
+                    Text(
+                        text = "No.1",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 7.dp)
+                    )
+                }
+            }
+            key == "hit" -> {
+                Surface(color = Color(0xFFFACC15), shape = RoundedCornerShape(6.dp)) {
+                    Text(
+                        text = "HIT",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFF111827),
+                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "godrej aer" in key -> {
+                Text(
+                    text = "aer",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Light,
+                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF0F766E)
+                )
+            }
+            "protekt" in key -> {
+                Surface(color = Color(0xFF0EA5E9), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "protekt",
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "good knight" in key -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Good\nknight",
+                        fontSize = 8.5.sp,
+                        lineHeight = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "parachute" in key -> {
+                Surface(
+                    color = if ("advansed" in key) Color(0xFF15803D) else Color(0xFF0284C7),
+                    shape = RoundedCornerShape(7.dp)
+                ) {
+                    Text(
+                        text = if ("advansed" in key) "Parachute\nADVANSED" else "Parachute",
+                        fontSize = 8.5.sp,
+                        lineHeight = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "hair & care" in key -> {
+                Text(
+                    text = "Hair&\nCare",
+                    fontSize = 11.sp,
+                    lineHeight = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center,
+                    color = Color(0xFF1F2937)
+                )
+            }
+            "set wet" in key -> {
+                Surface(color = Color(0xFF16A34A), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "SET\nWET",
+                        fontSize = 9.5.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "livon" -> {
+                Surface(color = Color(0xFFDB2777), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "LIVON",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "lay's" in key -> {
+                Surface(
+                    color = Color(0xFFFACC15),
+                    shape = CircleShape,
+                    border = BorderStroke(1.2.dp, Color(0xFFDC2626))
+                ) {
+                    Text(
+                        text = "Lay's",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFFDC2626),
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            key == "kurkure" -> {
+                Surface(color = Color(0xFF1E3A8A), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "Kurkure",
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "doritos" -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(6.dp)) {
+                    Text(
+                        text = "Doritos",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "uncle chipps" in key -> {
+                Surface(color = Color(0xFF0284C7), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "Uncle\nChipps",
+                        fontSize = 8.5.sp,
+                        lineHeight = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "quaker" -> {
+                Surface(color = Color(0xFF1E3A8A), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "QUAKER",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "glucon-d" in key -> {
+                Surface(
+                    color = Color.White,
+                    shape = RoundedCornerShape(7.dp),
+                    border = BorderStroke(1.2.dp, Color(0xFFDC2626))
+                ) {
+                    Text(
+                        text = "Glucon-D",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFFDC2626),
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "sugar free" in key -> {
+                Text(
+                    text = "Sugar\nFree",
+                    fontSize = 11.5.sp,
+                    lineHeight = 12.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center,
+                    color = Color(0xFF0284C7)
+                )
+            }
+            "nutralite" in key -> {
+                Surface(color = Color(0xFF16A34A), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "Nutralite",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "cadbury" in key -> {
+                Surface(color = Color(0xFF4C1D95), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Cadbury",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontStyle = FontStyle.Italic,
+                        fontFamily = FontFamily.Serif,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "oreo" -> {
+                Surface(
+                    color = Color(0xFF0057B8),
+                    shape = CircleShape,
+                    border = BorderStroke(1.2.dp, Color.White)
+                ) {
+                    Text(
+                        text = "OREO",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            "bournvita" in key -> {
+                Surface(color = Color(0xFF92400E), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "Bourn\nVita",
+                        fontSize = 9.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFFDE68A),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "tide" -> {
+                Surface(
+                    color = Color(0xFFF97316),
+                    shape = CircleShape,
+                    border = BorderStroke(1.5.dp, Color(0xFFFACC15))
+                ) {
+                    Text(
+                        text = "Tide",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFF1E3A8A),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            key == "ariel" -> {
+                Surface(color = Color(0xFF047857), shape = CircleShape) {
+                    Text(
+                        text = "ARIEL",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            "pampers" in key -> {
+                Surface(color = Color(0xFF0D9488), shape = RoundedCornerShape(9.dp)) {
+                    Text(
+                        text = "Pampers",
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "whisper" in key -> {
+                Surface(color = Color(0xFFBE185D), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "whisper",
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "tropicana" in key -> {
+                Text(
+                    text = "Tropicana",
+                    fontSize = 9.5.sp,
+                    fontWeight = FontWeight.Black,
+                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF15803D)
+                )
+            }
+            "aquafina" in key -> {
+                Surface(color = Color(0xFF0284C7), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "AQUAFINA",
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "sting" -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "STING",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFFFACC15),
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "saffola" in key -> {
+                Surface(color = Color(0xFFF59E0B), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Saffola",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            key == "colgate" -> {
+                Surface(color = Color(0xFFDC2626), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Colgate",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "palmolive" in key -> {
+                Surface(color = Color(0xFF15803D), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Palmolive",
+                        fontSize = 8.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "amul" in key -> {
+                Surface(
+                    shape = CircleShape,
+                    color = Color.White,
+                    border = BorderStroke(1.4.dp, Color(0xFFDC2626))
+                ) {
+                    Text(
+                        text = "Amul",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontStyle = FontStyle.Italic,
+                        color = Color(0xFFDC2626),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            "ferrero" in key -> {
+                Surface(
+                    color = Color(0xFF451A03),
+                    shape = RoundedCornerShape(7.dp),
+                    border = BorderStroke(1.dp, Color(0xFFF59E0B))
+                ) {
+                    Text(
+                        text = "FERRERO\nROCHER",
+                        fontSize = 7.5.sp,
+                        lineHeight = 9.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = FontFamily.Serif,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFFDE68A),
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "nutella" in key -> {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "n", fontSize = 13.sp, fontWeight = FontWeight.Black, color = Color(0xFF111827))
+                    Text(text = "utella", fontSize = 12.sp, fontWeight = FontWeight.Black, color = Color(0xFFDC2626))
+                }
+            }
+            key == "ghadi" -> {
+                Surface(color = Color(0xFFC82829), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "GHADI",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color(0xFFFACC15),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "parle" in key || "hide & seek" in key || "monaco" in key -> {
+                Surface(color = Color(0xFFE11D2E), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = subBrandName,
+                        fontSize = 9.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "fortune" in key -> {
+                Surface(color = Color(0xFF0E7490), shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = "Fortune",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFFFDE047),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "kellogg" in key -> {
+                Text(
+                    text = "Kellogg's",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontStyle = FontStyle.Italic,
+                    fontFamily = FontFamily.Serif,
+                    color = Color(0xFFD3122A)
+                )
+            }
+            "haldiram" in key -> {
+                Surface(color = Color(0xFFC81E2B), shape = CircleShape) {
+                    Text(
+                        text = "Haldiram's",
+                        fontSize = 8.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 6.dp)
+                    )
+                }
+            }
+            "bajaj" in key -> {
+                Surface(
+                    color = Color(0xFFFFF7ED),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, Color(0xFFD97706))
+                ) {
+                    Text(
+                        text = "Bajaj\nAlmond",
+                        fontSize = 9.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFB45309),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "good day" in key || "bourbon" in key || "nutrichoice" in key || "toastea" in key || "britannia" in key -> {
+                Surface(color = Color(0xFFD81E27), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = subBrandName.replace(" Bread & Cakes", ""),
+                        fontSize = 8.5.sp,
+                        lineHeight = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "classmate" in key -> {
+                Text(
+                    text = "Classmate",
+                    fontSize = 9.5.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF1D4ED8)
+                )
+            }
+            "croma" in key -> {
+                Surface(color = Color(0xFF111827), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = "croma",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFF2DD4BF),
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            "itc" in key -> {
+                Surface(color = Color(0xFF0A3868), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = subBrandName.replace("ITC ", "ITC\n"),
+                        fontSize = 7.5.sp,
+                        lineHeight = 9.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            "tata" in key -> {
+                Surface(color = Color(0xFF1E56A0), shape = RoundedCornerShape(7.dp)) {
+                    Text(
+                        text = subBrandName,
+                        fontSize = 8.sp,
+                        lineHeight = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            key == "xpert" || key == "odopic" || key == "candyman" || key == "mangaldeep" || "cherry blossom" in key -> {
+                val pillColor = when {
+                    key == "xpert" -> Color(0xFF15803D)
+                    key == "odopic" -> Color(0xFF0284C7)
+                    key == "candyman" -> Color(0xFFDC2626)
+                    key == "mangaldeep" -> Color(0xFFEA580C)
+                    else -> Color(0xFF1F2937)
+                }
+                Surface(color = pillColor, shape = RoundedCornerShape(8.dp)) {
+                    Text(
+                        text = subBrandName,
+                        fontSize = 8.5.sp,
+                        lineHeight = 9.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)
+                    )
+                }
+            }
+            else -> {
+                Surface(
+                    color = fallbackColor.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, fallbackColor.copy(alpha = 0.25f))
+                ) {
+                    Text(
+                        text = subBrandName,
+                        fontSize = 9.5.sp,
+                        lineHeight = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = fallbackColor,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable

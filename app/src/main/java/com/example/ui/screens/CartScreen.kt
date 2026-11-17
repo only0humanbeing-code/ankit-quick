@@ -46,9 +46,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.R
+import com.example.model.Brand
 import com.example.model.CartSummary
 import com.example.model.StoreConfig
 import com.example.ui.components.ProductVisual
+import com.example.ui.components.resolveSubBrandLogoUrl
 import com.example.ui.theme.QuickGreen
 import com.example.ui.theme.QuickGreenContainer
 import com.example.ui.theme.QuickMuted
@@ -63,8 +65,10 @@ fun CartScreen(
     onClearCart: () -> Unit,
     onBrowseProducts: () -> Unit,
     onCheckoutClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    brands: List<Brand> = emptyList()
 ) {
+    val brandMap = androidx.compose.runtime.remember(brands) { brands.associateBy { it.id } }
     Column(modifier = modifier.fillMaxSize()) {
         // Header
         Surface(
@@ -239,10 +243,15 @@ fun CartScreen(
                             modifier = Modifier.padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            val itemBrand = brandMap[item.product.brandId]
                             ProductVisual(
                                 imageKey = item.product.imageKey,
                                 colorHex = item.product.colorHex,
                                 iconSize = 28.dp,
+                                imageUrl = item.product.imageUrl,
+                                brandName = item.product.subBrand.ifBlank { itemBrand?.name.orEmpty() },
+                                brandLogoUrl = resolveSubBrandLogoUrl(item.product.subBrand, itemBrand?.logoUrl.orEmpty()),
+                                brandColorHex = itemBrand?.colorHex ?: 0xFF0C831FL,
                                 modifier = Modifier.size(64.dp)
                             )
                             Spacer(Modifier.width(12.dp))

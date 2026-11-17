@@ -94,8 +94,8 @@ fun ProductCard(
                     modifier = Modifier.matchParentSize(),
                     iconSize = 44.dp,
                     imageUrl = product.imageUrl,
-                    brandName = brand?.name.orEmpty(),
-                    brandLogoUrl = brand?.logoUrl.orEmpty(),
+                    brandName = product.subBrand.ifBlank { brand?.name.orEmpty() },
+                    brandLogoUrl = resolveSubBrandLogoUrl(product.subBrand, brand?.logoUrl.orEmpty()),
                     brandColorHex = brand?.colorHex ?: 0xFF0C831FL
                 )
 

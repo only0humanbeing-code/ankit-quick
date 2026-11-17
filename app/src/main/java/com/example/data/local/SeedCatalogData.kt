@@ -21,49 +21,53 @@ import com.example.model.UserProfile
  */
 object SeedCatalogData {
 
-    val categories: List<Category> = listOf(
-        Category("cat_veg", "Fresh Vegetables", "Farm-picked daily", "veg", 0xFFE8F7EA, 1),
-        Category("cat_fruits", "Fresh Fruits", "Seasonal & sweet", "fruits", 0xFFFFF1E6, 2),
-        Category("cat_dairy", "Dairy & Bread", "Milk, curd, eggs", "dairy", 0xFFE8F3FF, 3),
-        Category("cat_staples", "Atta, Rice & Dal", "Kitchen staples", "staples", 0xFFFEF6E4, 4),
-        Category("cat_oil", "Masala & Oil", "Spices & ghee", "spices", 0xFFFFEBEB, 5),
-        Category("cat_snacks", "Snacks & Namkeen", "Chips & bhujia", "snacks", 0xFFFFF4DE, 6),
-        Category("cat_drinks", "Tea, Coffee & Juice", "Chai & coolers", "drinks", 0xFFEAF7F5, 7),
-        Category("cat_bakery", "Biscuits & Cakes", "Cookies & rusks", "bakery", 0xFFFCEEF5, 8),
-        Category("cat_breakfast", "Breakfast & Oats", "Cereals & spreads", "breakfast", 0xFFF0F4FF, 9),
-        Category("cat_frozen", "Ice Cream & Frozen", "Tubs & momos", "frozen", 0xFFECF8FF, 10),
-        Category("cat_cleaning", "Home & Cleaning", "Detergents & wipes", "cleaning", 0xFFECFDF5, 11),
-        Category("cat_personal", "Personal Care", "Bath, hair & oral", "personal", 0xFFF5EEFF, 12)
-    )
+    val categories: List<Category> by lazy {
+        listOf(
+            Category("cat_veg", "Fresh Vegetables", "Farm-picked daily", "veg", 0xFFE8F7EA, 1),
+            Category("cat_fruits", "Fresh Fruits", "Seasonal & sweet", "fruits", 0xFFFFF1E6, 2),
+            Category("cat_dairy", "Dairy & Bread", "Milk, curd, eggs", "dairy", 0xFFE8F3FF, 3),
+            Category("cat_staples", "Atta, Rice & Dal", "Kitchen staples", "staples", 0xFFFEF6E4, 4),
+            Category("cat_oil", "Masala & Oil", "Spices & ghee", "spices", 0xFFFFEBEB, 5),
+            Category("cat_snacks", "Snacks & Namkeen", "Chips & bhujia", "snacks", 0xFFFFF4DE, 6),
+            Category("cat_drinks", "Tea, Coffee & Juice", "Chai & coolers", "drinks", 0xFFEAF7F5, 7),
+            Category("cat_bakery", "Biscuits & Cakes", "Cookies & rusks", "bakery", 0xFFFCEEF5, 8),
+            Category("cat_breakfast", "Breakfast & Oats", "Cereals & spreads", "breakfast", 0xFFF0F4FF, 9),
+            Category("cat_frozen", "Ice Cream & Frozen", "Tubs & momos", "frozen", 0xFFECF8FF, 10),
+            Category("cat_cleaning", "Home & Cleaning", "Detergents & wipes", "cleaning", 0xFFECFDF5, 11),
+            Category("cat_personal", "Personal Care", "Bath, hair & oral", "personal", 0xFFF5EEFF, 12)
+        )
+    }
 
-    private fun wikiLogo(fileName: String): String =
-        "https://en.wikipedia.org/wiki/Special:FilePath/$fileName?width=480"
+    private fun domainLogo(domain: String): String =
+        "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.$domain&size=256"
 
-    val brands: List<Brand> = listOf(
-        Brand("brand_hul", "Hindustan Unilever", "Brighter Everyday", "Top FMCG", 0xFF1F36C7, wikiLogo("Hindustan_Unilever_Logo.svg")),
-        Brand("brand_dabur", "Dabur", "Celebrate Life", "Ayurvedic", 0xFF168341, wikiLogo("Dabur_Logo.svg")),
-        Brand("brand_reckitt", "Reckitt Benckiser", "Hygiene & Care", "Trusted", 0xFFE60067, wikiLogo("Reckitt_logo.svg")),
-        Brand("brand_tata", "Tata Global Beverages", "Unpolished & Tea", "Tata Trust", 0xFF1E56A0, wikiLogo("TATA-CONSUMER-PRODUCTS_BLUE_LOGO_Feb_13.png")),
-        Brand("brand_itc", "ITC", "Aashirvaad & Sunfeast", "Bestseller", 0xFF0A3868, wikiLogo("ITC_Limited_Logo.svg")),
-        Brand("brand_mondelez", "Mondelez", "Cadbury & Oreo", "Sweet Joy", 0xFF51247A, wikiLogo("Mondelez_international_2012_logo.svg")),
-        Brand("brand_godrej", "Godrej", "Good Knight & Care", "Heritage", 0xFFC01F76, wikiLogo("Godrej_Logo.svg")),
-        Brand("brand_pg", "Procter & Gamble", "Tide, Ariel & Pampers", "Global Care", 0xFF003DA5, wikiLogo("Procter_%26_Gamble_logo.svg")),
-        Brand("brand_varun", "Varun Beverages", "Refreshing Drinks", "Chilled", 0xFF14286E, wikiLogo("Varun_Beverages_logo_2026.png")),
-        Brand("brand_marico", "Marico", "Saffola & Parachute", "Healthy Living", 0xFF1E6BB8, wikiLogo("Marico_Logo.svg")),
-        Brand("brand_nestle", "Nestle", "Good Food, Good Life", "Iconic", 0xFF005596, wikiLogo("Nestle_textlogo_blue.png")),
-        Brand("brand_pepsico", "Pepsico", "Lay's & Quaker", "Snacks", 0xFF004B93, wikiLogo("Pepsico_logo.png")),
-        Brand("brand_britannia", "Britannia", "Eat Healthy Think Better", "Bakery King", 0xFFD81E27, wikiLogo("Britannia_Industries_logo.svg")),
-        Brand("brand_colgate", "Colgate Palmolive", "Smile & Oral Care", "#1 Oral", 0xFF0078C8, wikiLogo("Colgate_Palmolive.png")),
-        Brand("brand_amul", "Amul", "The Taste of India", "Dairy Giant", 0xFF1E293B, wikiLogo("Amul_official_logo.svg")),
-        Brand("brand_ferrero", "Ferrero", "Rocher & Nutella", "Gourmet", 0xFF5D3A1A, wikiLogo("Ferrero_-_logo_red_(Italy,_1964-).svg")),
-        Brand("brand_rspl", "RSPL", "Ghadi Detergent", "Value Care", 0xFFC82829, wikiLogo("Ghadi_Detergent_Logo.png")),
-        Brand("brand_parle", "Parle", "Parle-G & Monaco", "India's Own", 0xFFE11D2E, wikiLogo("Parle_Products_logo.svg")),
-        Brand("brand_adani", "Adani Wilmar", "Fortune Foods", "Kitchen King", 0xFF0E7490, wikiLogo("Adani_Wilmar.svg")),
-        Brand("brand_zydus", "Zydus Wellness", "Glucon-D & Nutralite", "Wellness", 0xFF0284C7, wikiLogo("Zydus_Lifesciences.svg")),
-        Brand("brand_haldiram", "Haldiram's", "Authentic Snacks", "Classic", 0xFFC81E2B, wikiLogo("Haldiram's_Logo_SVG.svg")),
-        Brand("brand_kellogg", "Kellogg's", "Corn Flakes & Chocos", "Breakfast", 0xFFD3122A, wikiLogo("Kellogg's-Logo.svg")),
-        Brand("brand_bajaj", "Bajaj", "Almond Drops Hair Care", "Trusted Oil", 0xFFD93829, wikiLogo("Bajaj_Consumer_Care_logo.png"))
-    )
+    val brands: List<Brand> by lazy {
+        listOf(
+        Brand("brand_hul", "Hindustan Unilever", "Brighter Everyday", "Top FMCG", 0xFF1F36C7, domainLogo("hul.co.in")),
+        Brand("brand_dabur", "Dabur", "Celebrate Life", "Ayurvedic", 0xFF168341, domainLogo("dabur.com")),
+        Brand("brand_reckitt", "Reckitt Benckiser", "Hygiene & Care", "Trusted", 0xFFE60067, domainLogo("reckitt.com")),
+        Brand("brand_tata", "Tata Global Beverages", "Unpolished & Tea", "Tata Trust", 0xFF1E56A0, domainLogo("tataconsumer.com")),
+        Brand("brand_itc", "ITC", "Aashirvaad & Sunfeast", "Bestseller", 0xFF0A3868, domainLogo("itcportal.com")),
+        Brand("brand_mondelez", "Mondelez", "Cadbury & Oreo", "Sweet Joy", 0xFF51247A, domainLogo("mondelezinternational.com")),
+        Brand("brand_godrej", "Godrej", "Good Knight & Care", "Heritage", 0xFFC01F76, domainLogo("godrejcp.com")),
+        Brand("brand_pg", "Procter & Gamble", "Tide, Ariel & Pampers", "Global Care", 0xFF003DA5, domainLogo("pg.com")),
+        Brand("brand_varun", "Varun Beverages", "Refreshing Drinks", "Chilled", 0xFF14286E, domainLogo("varunbeverages.com")),
+        Brand("brand_marico", "Marico", "Saffola & Parachute", "Healthy Living", 0xFF1E6BB8, domainLogo("marico.com")),
+        Brand("brand_nestle", "Nestle", "Good Food, Good Life", "Iconic", 0xFF005596, domainLogo("nestle.in")),
+        Brand("brand_pepsico", "Pepsico", "Lay's & Quaker", "Snacks", 0xFF004B93, domainLogo("pepsicoindia.co.in")),
+        Brand("brand_britannia", "Britannia", "Eat Healthy Think Better", "Bakery King", 0xFFD81E27, domainLogo("britannia.co.in")),
+        Brand("brand_colgate", "Colgate Palmolive", "Smile & Oral Care", "#1 Oral", 0xFF0078C8, domainLogo("colgatepalmolive.co.in")),
+        Brand("brand_amul", "Amul", "The Taste of India", "Dairy Giant", 0xFF1E293B, domainLogo("amul.com")),
+        Brand("brand_ferrero", "Ferrero", "Rocher & Nutella", "Gourmet", 0xFF5D3A1A, domainLogo("ferreroindia.com")),
+        Brand("brand_rspl", "RSPL", "Ghadi Detergent", "Value Care", 0xFFC82829, domainLogo("rsplgroup.com")),
+        Brand("brand_parle", "Parle", "Parle-G & Monaco", "India's Own", 0xFFE11D2E, domainLogo("parleproducts.com")),
+        Brand("brand_adani", "Adani Wilmar", "Fortune Foods", "Kitchen King", 0xFF0E7490, domainLogo("awl.in")),
+        Brand("brand_zydus", "Zydus Wellness", "Glucon-D & Nutralite", "Wellness", 0xFF0284C7, domainLogo("zyduswellness.com")),
+        Brand("brand_haldiram", "Haldiram's", "Authentic Snacks", "Classic", 0xFFC81E2B, domainLogo("haldirams.com")),
+        Brand("brand_kellogg", "Kellogg's", "Corn Flakes & Chocos", "Breakfast", 0xFFD3122A, domainLogo("kelloggs.com")),
+        Brand("brand_bajaj", "Bajaj", "Almond Drops Hair Care", "Trusted Oil", 0xFFD93829, domainLogo("bajajconsumercare.com"))
+        )
+    }
 
     private fun v(
         pid: String,
@@ -110,54 +114,70 @@ object SeedCatalogData {
         "p13", "p78" -> "Nestle a+"
         "p14" -> "Amul Paneer"
         "p15", "p40", "p77" -> "Britannia Bread & Cakes"
-        "p16", "p20", "p76" -> "Aashirvaad"
-        "p17", "p19", "p72", "p73", "p74", "p85", "p114" -> "Tata Sampann"
+        "p16", "p20", "p76", "p153", "p159", "p167" -> "Aashirvaad"
+        "p17", "p19", "p72", "p73", "p74", "p85", "p114", "p152", "p156", "p157", "p161", "p162", "p163", "p165" -> "Tata Sampann"
         "p18", "p21", "p25", "p112" -> "Fortune Oils & Rice"
         "p22" -> "Amul Ghee"
-        "p23", "p24", "p75" -> "Tata Salt & Spices"
+        "p23", "p24" -> "Tata Sampann"
+        "p75" -> "Tata Salt"
         "p26" -> "Haldiram's Bhujia"
         "p27", "p28", "p30", "p84", "p86", "p87", "p115" -> "Haldiram's Namkeen"
-        "p29" -> "Lay's & Quaker"
-        "p31" -> "Tata Tea"
-        "p32", "p33", "p80" -> "Tropicana & Aquafina"
+        "p29" -> "Quaker"
+        "p31" -> "Tata Tea Gold"
+        "p32", "p33" -> "Tropicana"
+        "p80" -> "Aquafina"
         "p35", "p111" -> "Real"
         "p36" -> "Good Day"
         "p37" -> "Bourbon"
         "p38" -> "NutriChoice"
         "p39" -> "Toastea"
         "p41", "p45", "p81" -> "Dabur Honey"
-        "p42", "p44", "p109", "p118" -> "Tata Soulfull"
-        "p46", "p49", "p83" -> "Amul Ice Cream & Choco"
-        "p47", "p48", "p50" -> "Saffola & Parachute"
-        "p51", "p52", "p55", "p99" -> "Odonil"
-        "p53", "p54", "p94", "p96", "p97" -> "Lizol & Harpic"
+        "p42", "p44", "p118" -> "Tata Soulfull"
+        "p46", "p49", "p50", "p83" -> "Amul Ice Cream & Choco"
+        "p47", "p132" -> if (id == "p47") "Saffola" else "Parachute"
+        "p48" -> "ITC Master Chef"
+        "p51" -> "Odonil"
+        "p52" -> "Dabur Sanitize"
+        "p55" -> "Odopic"
+        "p99" -> "Dabur Pooja"
+        "p53" -> "Vim"
+        "p54" -> "Lizol"
+        "p94" -> "Harpic"
+        "p95" -> "Surf Excel"
+        "p96" -> "Godrej Ezee"
+        "p97" -> "Xpert"
         "p56" -> "Dabur Red"
-        "p57", "p60", "p92" -> "Dabur Amla"
+        "p57" -> "Dabur Vatika"
+        "p60", "p92" -> "Dabur Amla"
         "p58", "p89", "p91" -> "Gulabari"
-        "p59", "p88", "p95", "p98" -> "Lifebuoy & Surf Excel"
-        "p61", "p62", "p63", "p64", "p65", "p100", "p102", "p103" -> "Tata Consumer Picks"
-        "p66", "p67", "p68", "p69", "p70", "p71", "p101" -> "ITC Farmland Fresh"
+        "p59" -> "Lifebuoy"
+        "p61", "p62", "p63", "p64", "p65" -> "Croma Tech"
+        "p102", "p103" -> "Tata Kitchen"
+        "p66", "p67", "p68", "p69", "p70", "p71" -> "ITC Farmland Fresh"
         "p79" -> "Tata Coffee"
         "p82" -> "Tata Copper+"
+        "p88" -> "Whisper"
         "p90" -> "Dabur Chyawanprash"
-        "p93" -> "Bajaj Almond Drops"
+        "p93", "p149" -> "Bajaj Almond Drops"
+        "p98", "p125" -> "Cadbury"
+        "p100" -> "Classmate"
+        "p101" -> "Godrej Garden"
         "p104", "p105", "p106", "p107", "p108" -> "Godrej Real Good"
+        "p109" -> "Kellogg's Muesli"
         "p110" -> "Ferrero Rocher"
-        "p116", "p119" -> "Pampers & Whisper"
-        "p117" -> "Palmolive & Colgate"
+        "p116", "p119" -> "Pampers"
+        "p117" -> "Palmolive"
         "p120" -> "Kissan"
         "p121" -> "Red Label"
         "p122" -> "Horlicks"
         "p123" -> "Lux"
         "p124" -> "Dettol"
-        "p125" -> "Cadbury"
         "p126" -> "Oreo"
         "p127" -> "Bournvita"
         "p128" -> "Good Knight"
         "p129" -> "Tide"
         "p130" -> "Ariel"
         "p131" -> "Sting"
-        "p132" -> "Saffola"
         "p133" -> "MAGGI"
         "p134" -> "Nescafe"
         "p135" -> "KitKat"
@@ -174,12 +194,100 @@ object SeedCatalogData {
         "p146" -> "Nutralite"
         "p147" -> "Kellogg's Corn Flakes"
         "p148" -> "Kellogg's Chocos"
-        "p149" -> "Bajaj Almond Drops"
         "p150" -> "Sunfeast"
         "p151", "p155", "p158", "p160", "p164", "p166" -> "Fortune"
-        "p152", "p156", "p157", "p161", "p162", "p163", "p165" -> "Tata Sampann"
-        "p153", "p159", "p167" -> "Aashirvaad"
         "p154" -> "Saffola"
+        // New flagship company sub-brand products (p168..p222)
+        "p168" -> "Dove"
+        "p169" -> "Rin"
+        "p170" -> "Bru"
+        "p171" -> "Taj Mahal"
+        "p172" -> "Indulekha"
+        "p173" -> "Comfort"
+        "p174" -> "Wheel"
+        "p175" -> "Boost"
+        "p176" -> "Pears"
+        "p177" -> "Glow & Lovely"
+        "p178" -> "Clinic Plus"
+        "p179" -> "Close Up"
+        "p180" -> "Domex"
+        "p181" -> "Lipton"
+        "p182" -> "TRESemmé"
+        "p183" -> "Sunsilk"
+        "p184" -> "Pepsodent"
+        "p185" -> "Pond's"
+        "p186" -> "Lakmé"
+        "p187" -> "Vaseline"
+        "p188" -> "Knorr"
+        "p189" -> "Tata Tea Premium"
+        "p190" -> "Tata Tea Agni"
+        "p191" -> "Tetley"
+        "p192" -> "Himalayan"
+        "p193" -> "Tata Tea Chakra Gold"
+        "p194" -> "Tata Tea Kanan Devan"
+        "p195" -> "Tata I-Shakti"
+        "p196" -> "Sunfeast YiPPee!"
+        "p197" -> "Bingo!"
+        "p198" -> "Vivel"
+        "p199" -> "Nimyle"
+        "p200" -> "Savlon"
+        "p201" -> "Mangaldeep"
+        "p202" -> "Fiama"
+        "p203" -> "Candyman"
+        "p204" -> "B Natural"
+        "p205" -> "Engage"
+        "p206" -> "Nestea"
+        "p207" -> "Nescafe Gold"
+        "p208" -> "Veet"
+        "p209" -> "Moov"
+        "p210" -> "Colin"
+        "p211" -> "Vanish"
+        "p212" -> "Airwick"
+        "p213" -> "Cherry Blossom"
+        "p214" -> "Durex"
+        "p215" -> "Godrej No.1"
+        "p216" -> "Hit"
+        "p217" -> "Godrej Aer"
+        "p218" -> "Godrej Protekt"
+        "p219" -> "Hair & Care"
+        "p220" -> "Set Wet"
+        "p221" -> "Parachute Advansed"
+        "p222" -> "Livon"
+        "p223" -> "Doritos"
+        "p224" -> "Uncle Chipps"
+        "p225", "p226", "p227", "p235", "p236", "p245" -> "Fortune"
+        "p228" -> "Saffola"
+        "p229", "p230", "p231", "p246" -> "MAGGI"
+        "p232" -> "Sunfeast YiPPee!"
+        "p233", "p234" -> "Tata Sampann"
+        "p237", "p238" -> "Classmate"
+        "p239" -> "Ferrero Rocher"
+        "p240" -> "Cadbury"
+        "p241" -> "Savlon"
+        "p242", "p243", "p247" -> "Tata Kitchen"
+        "p244" -> "Godrej Protekt"
+        "p248" -> "Lizol"
+        "p249" -> "Dabur Chyawanprash"
+        "p250" -> "Dabur Amla"
+        "p251", "p281" -> "Hajmola"
+        "p252" -> "Moov"
+        "p253", "p254", "p255" -> "Croma Tech"
+        "p256", "p257", "p259", "p271", "p272", "p276" -> "Tata Kitchen"
+        "p258", "p260" -> "Godrej Garden"
+        "p261", "p262", "p263" -> "Godrej Real Good"
+        "p264" -> "Pampers"
+        "p265" -> "Whisper"
+        "p266", "p267" -> "Classmate"
+        "p268" -> "Cadbury"
+        "p269" -> "Ferrero Rocher"
+        "p270" -> "Savlon"
+        "p273" -> "Godrej Protekt"
+        "p274" -> "Aashirvaad"
+        "p275" -> "Kissan"
+        "p277" -> "Harpic"
+        "p278" -> "Dabur Honey"
+        "p279" -> "Dabur Chyawanprash"
+        "p280" -> "Dabur Amla"
         else -> brands.firstOrNull { it.id == brandId }?.name ?: "QuickKart"
     }
 
@@ -187,8 +295,8 @@ object SeedCatalogData {
         "p01", "p02", "p03", "p04" -> "Fruits & Vegetables" to "Fresh Vegetables"
         "p05" -> "Fruits & Vegetables" to "Herbs & Seasonings"
         "p06", "p07", "p08", "p09", "p10" -> "Fruits & Vegetables" to "Fresh Fruits"
-        "p11", "p12", "p13", "p14" -> "Bakery, Cakes & Dairy" to "Dairy"
-        "p15" -> "Bakery, Cakes & Dairy" to "Breads & Buns"
+        "p11", "p12", "p13", "p14" -> "Bakery, Cake, Dairy & Fresh, Frozen" to "Dairy"
+        "p15" -> "Bakery, Cake, Dairy & Fresh, Frozen" to "Breads & Buns"
         "p16", "p20" -> "Foodgrains, Oil & Masala" to "Atta, Flours & Sooji"
         "p17", "p19" -> "Foodgrains, Oil & Masala" to "Dals & Pulses"
         "p18" -> "Foodgrains, Oil & Masala" to "Rice & Rice Products"
@@ -199,18 +307,19 @@ object SeedCatalogData {
         "p32", "p33", "p35" -> "Beverages" to "Fruit Juices & Drinks"
         "p34" -> "Beverages" to "Energy & Soft Drinks"
         "p36", "p37", "p38" -> "Snacks & Branded Foods" to "Biscuits & Cookies"
-        "p39" -> "Bakery, Cakes & Dairy" to "Cookies, Rusk & Khari"
-        "p40" -> "Bakery, Cakes & Dairy" to "Cakes & Pastries"
+        "p39" -> "Bakery, Cake, Dairy & Fresh, Frozen" to "Cookies, Rusk & Khari"
+        "p40" -> "Bakery, Cake, Dairy & Fresh, Frozen" to "Cakes & Pastries"
         "p41", "p43", "p45" -> "Snacks & Branded Foods" to "Spreads, Sauces, Ketchup"
         "p42", "p44" -> "Snacks & Branded Foods" to "Breakfast Cereals"
-        "p46", "p47", "p48", "p49", "p50" -> "Gourmet & World Food" to "Tinned & Processed Food"
+        "p46", "p48", "p49", "p50" -> "Bakery, Cake, Dairy & Fresh, Frozen" to "Fresh & Frozen"
+        "p47" -> "Gourmet & World Food" to "Tinned & Processed Food"
         "p51", "p54" -> "Cleaning & Household" to "Detergents & Dishwash"
         "p52", "p55" -> "Cleaning & Household" to "Fresheners & Repellents"
         "p53" -> "Cleaning & Household" to "All Purpose Cleaners"
-        "p56" -> "Beauty & Hygiene" to "Oral Care"
-        "p57", "p60" -> "Beauty & Hygiene" to "Hair Care"
-        "p58" -> "Beauty & Hygiene" to "Skin Care"
-        "p59" -> "Beauty & Hygiene" to "Bath & Hand Wash"
+        "p56" -> "Body Care & Beauty" to "Oral Care"
+        "p57", "p60" -> "Body Care & Beauty" to "Hair Care"
+        "p58" -> "Body Care & Beauty" to "Skin Care"
+        "p59" -> "Body Care & Beauty" to "Bath & Hand Wash"
         else -> "Snacks & Branded Foods" to "Snacks & Namkeen"
     }
 
@@ -251,7 +360,8 @@ object SeedCatalogData {
         )
     }
 
-    val products: List<Product> = listOf(
+    val products: List<Product> by lazy {
+        listOf(
         // 1. Fresh Vegetables (5) -> brand_itc (ITC Farmland)
         p(
             "p01", "Hybrid Red Tomato",
@@ -822,35 +932,35 @@ object SeedCatalogData {
             "Hawk-inspired in-ear wired earphones with HD mic and deep bass.",
             "cat_cleaning", "brand_tata", "headphones", 0xFFDBEAFE, 4.5, 980, false,
             listOf(v("p61", 1, "1 Unit", 999.0, 399.0, 18.0, 18)),
-            "Electronics", "Audio devices"
+            "Electronic Appliances, Home & Kitchen Essentials", "Audio devices"
         ),
         p(
             "p62", "Duracell Ultra Alkaline AA Batteries",
             "Long-lasting power for remotes, toys, and wireless accessories.",
             "cat_cleaning", "brand_tata", "electrical", 0xFFE0F2FE, 4.8, 1240, false,
             listOf(v("p62", 1, "Pack of 4", 180.0, 155.0, 20.0, 42)),
-            "Electronics", "Electrical Accessories"
+            "Electronic Appliances, Home & Kitchen Essentials", "Electrical Accessories"
         ),
         p(
             "p63", "Havells 4-Socket Spike Guard Extension",
             "Surge-protected 1.5m extension board with master switch.",
             "cat_cleaning", "brand_tata", "electrical", 0xFFE0F2FE, 4.6, 410, false,
             listOf(v("p63", 1, "1.5 m Cord", 650.0, 449.0, 19.0, 15)),
-            "Electronics", "Electrical Accessories"
+            "Electronic Appliances, Home & Kitchen Essentials", "Electrical Accessories"
         ),
         p(
             "p64", "Philips Series 1000 Beard Trimmer",
             "Self-sharpening stainless blades with 45 min cordless runtime.",
             "cat_personal", "brand_tata", "grooming", 0xFFE2E8F0, 4.6, 860, false,
             listOf(v("p64", 1, "1 Unit", 1495.0, 1099.0, 16.0, 12)),
-            "Electronics", "Personal Care & Grooming"
+            "Electronic Appliances, Home & Kitchen Essentials", "Personal Care & Grooming"
         ),
         p(
             "p65", "Noise ColorFit Pulse Smartwatch",
             "1.4-inch HD display smartwatch with SpO2 and heart rate tracking.",
             "cat_personal", "brand_tata", "watch", 0xFFE0E7FF, 4.4, 710, false,
             listOf(v("p65", 1, "Jet Black", 4999.0, 1499.0, 18.0, 9)),
-            "Electronics", "Smart Wearables"
+            "Electronic Appliances, Home & Kitchen Essentials", "Smart Wearables"
         ),
         p(
             "p66", "Farmland Moong & Chana Sprouts Mix",
@@ -934,14 +1044,14 @@ object SeedCatalogData {
             "Crisp flaky oven-baked masala puff snacks for evening tea.",
             "cat_bakery", "brand_britannia", "rusk", 0xFFFFEDD5, 4.5, 480, false,
             listOf(v("p77", 1, "200 g", 65.0, 54.0, 18.0, 30)),
-            "Bakery, Cakes & Dairy", "Bakery Snacks"
+            "Bakery, Cake, Dairy & Fresh, Frozen", "Bakery Snacks"
         ),
         p(
             "p78", "Nestle a+ Plant Almond Milk",
             "Lactose-free unsweetened roasted almond beverage.",
             "cat_drinks", "brand_nestle", "milk", 0xFFE0F2FE, 4.5, 340, false,
             listOf(v("p78", 1, "1 L", 260.0, 219.0, 18.0, 18)),
-            "Bakery, Cakes & Dairy", "Non Dairy"
+            "Bakery, Cake, Dairy & Fresh, Frozen", "Non Dairy"
         ),
         p(
             "p79", "Tata Coffee Grand Classic Instant",
@@ -1011,42 +1121,42 @@ object SeedCatalogData {
             "Ultra-thin breathable cottony wings pads for all-day comfort.",
             "cat_personal", "brand_pg", "soap", 0xFFFCE7F3, 4.7, 1640, false,
             listOf(v("p88", 1, "XL 15 Pads", 180.0, 149.0, 22.0, 36)),
-            "Beauty & Hygiene", "Feminine Hygiene"
+            "Baby Care, Female & Hygiene", "Feminine Hygiene"
         ),
         p(
             "p89", "Dabur Gulabari Mist Body Deo",
             "Alcohol-free floral rose mist deodorant for long-lasting freshness.",
             "cat_personal", "brand_dabur", "skincare", 0xFFFCE7F3, 4.5, 380, false,
             listOf(v("p89", 1, "150 ml", 210.0, 165.0, 24.0, 25)),
-            "Beauty & Hygiene", "Fragrances & Deos"
+            "Body Care & Beauty", "Fragrances & Deos"
         ),
         p(
             "p90", "Dabur Chyawanprash 2X Immunity",
             "Ayurvedic blend of 40+ herbs and fresh amla for daily immunity.",
             "cat_personal", "brand_dabur", "medicine", 0xFFDCFCE7, 4.8, 2940, true,
             listOf(v("p90", 1, "500 g", 235.0, 199.0, 19.0, 42)),
-            "Beauty & Hygiene", "Health & Medicine"
+            "Body Care & Beauty", "Health & Medicine"
         ),
         p(
             "p91", "Dabur Gulabari Lip & Cheek Tint",
             "Shea butter & rosewater natural hydrating matte tint.",
             "cat_personal", "brand_dabur", "skincare", 0xFFFCE7F3, 4.5, 290, false,
             listOf(v("p91", 1, "4.5 g", 199.0, 159.0, 24.0, 18)),
-            "Beauty & Hygiene", "Makeup"
+            "Body Care & Beauty", "Makeup"
         ),
         p(
             "p92", "Dabur Charcoal Men's Face Wash",
             "Deep pore cleansing activated charcoal scrub wash for men.",
             "cat_personal", "brand_dabur", "grooming", 0xFFE2E8F0, 4.6, 510, false,
             listOf(v("p92", 1, "100 g", 165.0, 129.0, 25.0, 28)),
-            "Beauty & Hygiene", "Men's Grooming"
+            "Body Care & Beauty", "Men's Grooming"
         ),
         p(
             "p93", "Bajaj Herbal Relaxing Wellness Oil",
             "Soothing almond & vitamin-E body wellness massage oil.",
             "cat_personal", "brand_bajaj", "hairoil", 0xFFF5EEFF, 4.6, 220, false,
             listOf(v("p93", 1, "100 ml", 210.0, 169.0, 22.0, 20)),
-            "Beauty & Hygiene", "Sexual Wellness"
+            "Body Care & Beauty", "Sexual Wellness"
         ),
         p(
             "p94", "Harpic Power Plus Toilet Cleaner",
@@ -1210,28 +1320,28 @@ object SeedCatalogData {
             "Aloe vera enriched alcohol-free wet wipes for newborn skin.",
             "cat_personal", "brand_pg", "baby", 0xFFE0F2FE, 4.8, 1220, false,
             listOf(v("p116", 1, "72 Wipes", 199.0, 159.0, 20.0, 22)),
-            "Baby Care", "Baby Accessories"
+            "Baby Care, Female & Hygiene", "Baby Accessories"
         ),
         p(
             "p117", "Palmolive Milk & Honey Baby Wash",
             "Hypoallergenic tear-free chamomile wash gentle on delicate skin.",
             "cat_personal", "brand_colgate", "baby", 0xFFE0F2FE, 4.8, 980, false,
             listOf(v("p117", 1, "250 ml", 240.0, 195.0, 21.0, 30)),
-            "Baby Care", "Baby Bath & Hygiene"
+            "Baby Care, Female & Hygiene", "Baby Bath & Hygiene"
         ),
         p(
             "p118", "Tata Soulfull Ragi & Apple Kids Cereal",
             "Iron-fortified smooth cereal blend with real apple for growing kids.",
             "cat_breakfast", "brand_tata", "baby", 0xFFFEF3C7, 4.7, 760, false,
             listOf(v("p118", 1, "300 g", 265.0, 229.0, 16.0, 28)),
-            "Baby Care", "Baby Food & Formula"
+            "Baby Care, Female & Hygiene", "Baby Food & Formula"
         ),
         p(
             "p119", "Pampers Active Baby Pants Diapers (M)",
             "12-hour leak-lock cottony breathable diaper pants for 7–12 kg.",
             "cat_personal", "brand_pg", "baby", 0xFFE0F2FE, 4.9, 2540, true,
             listOf(v("p119", 1, "M • 42 Pants", 649.0, 499.0, 20.0, 32)),
-            "Baby Care", "Diapers & Wipes"
+            "Baby Care, Female & Hygiene", "Diapers & Wipes"
         ),
 
         // Additional Flagship Products so every one of the 23 Manufacturers shines!
@@ -1261,14 +1371,14 @@ object SeedCatalogData {
             "Silky perfumed lather for glowing soft skin.",
             "cat_personal", "brand_hul", "soap", 0xFFFCE7F3, 4.6, 1410, false,
             listOf(v("p123", 1, "Pack of 4", 160.0, 134.0, 20.0, 38)),
-            "Beauty & Hygiene", "Bath & Hand Wash"
+            "Body Care & Beauty", "Bath & Hand Wash"
         ),
         p(
             "p124", "Dettol Original Antiseptic Liquid",
             "Trusted first-aid & home disinfection antiseptic shield.",
             "cat_personal", "brand_reckitt", "spray", 0xFFDCFCE7, 4.9, 4120, true,
             listOf(v("p124", 1, "550 ml", 230.0, 199.0, 18.0, 50)),
-            "Beauty & Hygiene", "Health & Medicine"
+            "Body Care & Beauty", "Health & Medicine"
         ),
         p(
             "p125", "Cadbury Dairy Milk Silk Oreo",
@@ -1324,7 +1434,7 @@ object SeedCatalogData {
             "Unrefined natural coconut oil crafted from finest sun-dried coconuts.",
             "cat_personal", "brand_marico", "hairoil", 0xFFE0F2FE, 4.9, 4310, true,
             listOf(v("p132", 1, "500 ml Bottle", 230.0, 199.0, 19.0, 48)),
-            "Beauty & Hygiene", "Hair Care"
+            "Body Care & Beauty", "Hair Care"
         ),
         p(
             "p133", "MAGGI 2-Minute Masala Noodles",
@@ -1366,7 +1476,7 @@ object SeedCatalogData {
             "Amino Shakti formula adding natural calcium for stronger teeth.",
             "cat_personal", "brand_colgate", "toothpaste", 0xFFFEE2E2, 4.8, 4800, true,
             listOf(v("p138", 1, "200 g", 130.0, 108.0, 21.0, 60)),
-            "Beauty & Hygiene", "Oral Care"
+            "Body Care & Beauty", "Oral Care"
         ),
         p(
             "p139", "Nutella Hazelnut Spread with Cocoa",
@@ -1401,7 +1511,7 @@ object SeedCatalogData {
             "Light crispy oven-baked salted crackers ideal for party toppings.",
             "cat_bakery", "brand_parle", "biscuit", 0xFFFFEDD5, 4.6, 1740, false,
             listOf(v("p143", 1, "200 g", 40.0, 35.0, 19.0, 48)),
-            "Bakery, Cakes & Dairy", "Bakery Snacks"
+            "Bakery, Cake, Dairy & Fresh, Frozen", "Bakery Snacks"
         ),
         p(
             "p144", "Sugar Free Gold Low Calorie Sweetener",
@@ -1443,7 +1553,7 @@ object SeedCatalogData {
             "Light sweet almond oil enriched with 6x vitamin E for smooth hair.",
             "cat_personal", "brand_bajaj", "hairoil", 0xFFFEF3C7, 4.8, 3680, true,
             listOf(v("p149", 1, "300 ml Glass", 215.0, 179.0, 22.0, 42)),
-            "Beauty & Hygiene", "Hair Care"
+            "Body Care & Beauty", "Hair Care"
         ),
         p(
             "p150", "Sunfeast Dark Fantasy Choco Fills",
@@ -1622,14 +1732,1085 @@ object SeedCatalogData {
                 v("p167", 1, "5 kg", 365.0, 315.0, 15.0, 28)
             ),
             "Foodgrains, Oil & Masala", "Atta, Flours & Sooji"
+        ),
+
+        // Hindustan Unilever Ltd (HUL) Sub-brand Catalog (p168..p188)
+        p(
+            "p168", "Dove Cream Beauty Bathing Bar",
+            "1/4 moisturising cream gentle cleansing bar leaving skin soft and hydrated.",
+            "cat_personal", "brand_hul", "soap", 0xFFF8FAFC, 4.8, 3920, true,
+            listOf(
+                v("p168", 1, "100 g Single", 65.0, 58.0, 16.0, 48),
+                v("p168", 2, "Pack of 4 (400 g)", 248.0, 209.0, 18.0, 26)
+            ),
+            "Body Care & Beauty", "Bath & Hand Wash"
+        ),
+        p(
+            "p169", "Rin Refresh Lemon & Rose Detergent Bar",
+            "Lightning bright whiteness soap bar removing stubborn collar and cuff dirt.",
+            "cat_cleaning", "brand_hul", "cleaner", 0xFFE0F2FE, 4.7, 2410, false,
+            listOf(
+                v("p169", 1, "250 g Bar", 25.0, 22.0, 18.0, 64),
+                v("p169", 2, "Pack of 4", 98.0, 82.0, 20.0, 32)
+            ),
+            "Cleaning & Household", "Detergents & Dishwash"
+        ),
+        p(
+            "p170", "Bru Instant Coffee Chicory Mix",
+            "Finest roasted Arabica & Robusta plantation beans blended with chicory.",
+            "cat_drinks", "brand_hul", "coffee", 0xFFFEF3C7, 4.7, 2650, false,
+            listOf(
+                v("p170", 1, "100 g Pouch", 215.0, 182.0, 17.0, 36),
+                v("p170", 2, "200 g Jar", 440.0, 369.0, 18.5, 18)
+            ),
+            "Beverages", "Coffee"
+        ),
+        p(
+            "p171", "Brooke Bond Taj Mahal Tea",
+            "Wah Taj! Long golden Assam tea leaves packed for rich flavour and bright colour.",
+            "cat_drinks", "brand_hul", "tea", 0xFFE0F2FE, 4.9, 3480, true,
+            listOf(
+                v("p171", 1, "250 g Carton", 185.0, 159.0, 15.0, 40),
+                v("p171", 2, "500 g Pack", 360.0, 305.0, 17.0, 22)
+            ),
+            "Beverages", "Tea"
+        ),
+        p(
+            "p172", "Indulekha Bringha Hair Oil Selfie Bottle",
+            "Ayurvedic proprietary hairfall medicine prepared with bhringraj extracts.",
+            "cat_personal", "brand_hul", "hairoil", 0xFFDCFCE7, 4.6, 1790, false,
+            listOf(
+                v("p172", 1, "100 ml", 432.0, 349.0, 22.0, 24)
+            ),
+            "Body Care & Beauty", "Hair Care"
+        ),
+        p(
+            "p173", "Comfort After Wash Morning Fresh Fabric Conditioner",
+            "Adds unbeatable shine, softness and 14-day fresh fragrance to laundered clothes.",
+            "cat_cleaning", "brand_hul", "cleaner", 0xFFE0F2FE, 4.8, 2890, false,
+            listOf(
+                v("p173", 1, "860 ml Pouch", 235.0, 194.0, 19.0, 30)
+            ),
+            "Cleaning & Household", "Detergents & Dishwash"
+        ),
+        p(
+            "p174", "Active Wheel 2-in-1 Clean & Fresh Detergent",
+            "Power of lemons and floral jasmine lifting dullness cleanly in every bucket wash.",
+            "cat_cleaning", "brand_hul", "cleaner", 0xFFDCFCE7, 4.6, 3120, false,
+            listOf(
+                v("p174", 1, "1 kg", 72.0, 64.0, 18.0, 54),
+                v("p174", 2, "2 kg", 140.0, 121.0, 19.5, 28)
+            ),
+            "Cleaning & Household", "Detergents & Dishwash"
+        ),
+        p(
+            "p175", "Boost Chocolate Energy Nutrition Drink",
+            "Play the bigger game — chocolate energy malt drink enriched with iron & vitamins.",
+            "cat_drinks", "brand_hul", "coffee", 0xFFFEE2E2, 4.7, 2140, false,
+            listOf(
+                v("p175", 1, "500 g Pouch", 285.0, 242.0, 17.0, 28)
+            ),
+            "Beverages", "Nutrition Mix, Supplement"
+        ),
+        p(
+            "p176", "Pears Pure & Gentle Glycerine Soap",
+            "98% pure glycerine amber transparent bar preserving natural skin moisture.",
+            "cat_personal", "brand_hul", "soap", 0xFFFFEDD5, 4.7, 2540, false,
+            listOf(
+                v("p176", 1, "Pack of 3 (375 g)", 195.0, 162.0, 19.0, 32)
+            ),
+            "Body Care & Beauty", "Bath & Hand Wash"
+        ),
+        p(
+            "p177", "Glow & Lovely Advanced Multi Vitamin Cream",
+            "Daily multivitamin bright glow cream nourishing dull uneven skin.",
+            "cat_personal", "brand_hul", "skincare", 0xFFFCE7F3, 4.6, 1880, false,
+            listOf(
+                v("p177", 1, "50 g Tube", 130.0, 112.0, 18.0, 36)
+            ),
+            "Body Care & Beauty", "Skin Care"
+        ),
+        p(
+            "p178", "Clinic Plus Strong & Long Health Shampoo",
+            "Milk protein formula nourishing hair from root to tip against breakage.",
+            "cat_personal", "brand_hul", "hairoil", 0xFFE0F2FE, 4.7, 2670, false,
+            listOf(
+                v("p178", 1, "355 ml Bottle", 240.0, 189.0, 22.0, 34)
+            ),
+            "Body Care & Beauty", "Hair Care"
+        ),
+        p(
+            "p179", "Close Up Everfresh Red Hot Gel Toothpaste",
+            "Zinc-infused fresh antibacterial gel for 12-hour fresh breath confidence.",
+            "cat_personal", "brand_hul", "toothpaste", 0xFFFEE2E2, 4.7, 2190, false,
+            listOf(
+                v("p179", 1, "150 g", 115.0, 96.0, 20.0, 42)
+            ),
+            "Body Care & Beauty", "Oral Care"
+        ),
+        p(
+            "p180", "Domex Disinfectant Toilet Expert Liquid",
+            "Thick fresh-scent hypochlorite formula eliminating 99.9% germs & stains.",
+            "cat_cleaning", "brand_hul", "cleaner", 0xFFE0F2FE, 4.6, 1420, false,
+            listOf(
+                v("p180", 1, "500 ml", 105.0, 89.0, 21.0, 36)
+            ),
+            "Cleaning & Household", "All Purpose Cleaners"
+        ),
+        p(
+            "p181", "Lipton Pure & Light Green Tea Bags",
+            "Zero-calorie refreshing green tea steeped from young handpicked leaves.",
+            "cat_drinks", "brand_hul", "tea", 0xFFDCFCE7, 4.7, 1950, false,
+            listOf(
+                v("p181", 1, "25 Tea Bags", 170.0, 145.0, 18.0, 30)
+            ),
+            "Beverages", "Tea"
+        ),
+        p(
+            "p182", "TRESemmé Keratin Smooth Shampoo",
+            "Argan oil & keratin lower-sulphate salon smoothness shampoo controlling frizz.",
+            "cat_personal", "brand_hul", "hairoil", 0xFFFEE2E2, 4.8, 2240, false,
+            listOf(
+                v("p182", 1, "340 ml", 399.0, 299.0, 24.0, 22)
+            ),
+            "Body Care & Beauty", "Hair Care"
+        ),
+        p(
+            "p183", "Sunsilk Stunning Black Shine Shampoo",
+            "Amla-pearl-vitamin E nourishing shampoo for glossy jet-black hair.",
+            "cat_personal", "brand_hul", "hairoil", 0xFFFCE7F3, 4.7, 2410, false,
+            listOf(
+                v("p183", 1, "340 ml", 265.0, 205.0, 22.0, 28)
+            ),
+            "Body Care & Beauty", "Hair Care"
+        ),
+        p(
+            "p184", "Pepsodent Germicheck Cavity Protection Paste",
+            "CPC technology offering 12-hour germ shield for family oral health.",
+            "cat_personal", "brand_hul", "toothpaste", 0xFFE0F2FE, 4.6, 1650, false,
+            listOf(
+                v("p184", 1, "200 g", 125.0, 99.0, 21.0, 40)
+            ),
+            "Body Care & Beauty", "Oral Care"
+        ),
+        p(
+            "p185", "Pond's Dreamflower Fragrant Talcum Powder",
+            "Silky smooth pink lily talc keeping skin fresh and dry all summer.",
+            "cat_personal", "brand_hul", "skincare", 0xFFFCE7F3, 4.7, 1980, false,
+            listOf(
+                v("p185", 1, "200 g", 185.0, 149.0, 20.0, 30)
+            ),
+            "Body Care & Beauty", "Skin Care"
+        ),
+        p(
+            "p186", "Lakmé 9to5 Matte Complexion Compact",
+            "SPF 40 silky matte pressed powder for all-day office radiance.",
+            "cat_personal", "brand_hul", "skincare", 0xFFFCE7F3, 4.7, 1340, false,
+            listOf(
+                v("p186", 1, "9 g Pearl", 210.0, 175.0, 22.0, 20)
+            ),
+            "Body Care & Beauty", "Makeup"
+        ),
+        p(
+            "p187", "Vaseline Intensive Care Deep Moisture Jelly Lotion",
+            "Non-greasy micro-droplets repairing very dry skin in one application.",
+            "cat_personal", "brand_hul", "skincare", 0xFFFEF3C7, 4.8, 2560, false,
+            listOf(
+                v("p187", 1, "400 ml", 399.0, 299.0, 24.0, 26)
+            ),
+            "Body Care & Beauty", "Skin Care"
+        ),
+        p(
+            "p188", "Knorr Classic Thick Tomato Soup",
+            "100% real vine-ripened tomatoes gently simmered for restaurant-style soup.",
+            "cat_snacks", "brand_hul", "noodles", 0xFFFEE2E2, 4.7, 1680, false,
+            listOf(
+                v("p188", 1, "51 g Pack", 65.0, 55.0, 18.0, 40)
+            ),
+            "Snacks & Branded Foods", "Ready To Cook & Eat"
+        ),
+
+        // Tata Consumer / Tata Global Beverages Additional Brands (p189..p195)
+        p(
+            "p189", "Tata Tea Premium Desh Ki Chai",
+            "Balanced strong cupcrafted specifically for authentic Indian milk chai.",
+            "cat_drinks", "brand_tata", "tea", 0xFFDCFCE7, 4.8, 4120, true,
+            listOf(
+                v("p189", 1, "500 g Pouch", 285.0, 239.0, 16.0, 48)
+            ),
+            "Beverages", "Tea"
+        ),
+        p(
+            "p190", "Tata Tea Agni Strong Leaf Blend",
+            "Extra-strong Josh Jagaye Har Roz leaf-dust tea at an affordable value.",
+            "cat_drinks", "brand_tata", "tea", 0xFFFEE2E2, 4.7, 2940, false,
+            listOf(
+                v("p190", 1, "500 g", 160.0, 134.0, 18.0, 42)
+            ),
+            "Beverages", "Tea"
+        ),
+        p(
+            "p191", "Tetley Ginger Lemon Green Tea",
+            "Vitamin-C antioxidant green tea uplifting morning metabolism cleanly.",
+            "cat_drinks", "brand_tata", "tea", 0xFFE0F2FE, 4.7, 1840, false,
+            listOf(
+                v("p191", 1, "25 Tea Bags", 165.0, 135.0, 20.0, 32)
+            ),
+            "Beverages", "Tea"
+        ),
+        p(
+            "p192", "Himalayan Natural Mineral Water",
+            "Untouched pristine Himalayan foothill spring mineral hydration.",
+            "cat_drinks", "brand_tata", "water", 0xFFE0F2FE, 4.8, 1290, false,
+            listOf(
+                v("p192", 1, "1 L Bottle", 65.0, 55.0, 18.0, 40)
+            ),
+            "Beverages", "Water"
+        ),
+        p(
+            "p193", "Tata Tea Chakra Gold Active Strength",
+            "Rich South Indian strong granulated tea infused with Elaichi aroma.",
+            "cat_drinks", "brand_tata", "tea", 0xFFFEE2E2, 4.7, 1740, false,
+            listOf(
+                v("p193", 1, "500 g", 295.0, 249.0, 16.0, 28)
+            ),
+            "Beverages", "Tea"
+        ),
+        p(
+            "p194", "Tata Tea Kanan Devan Classic",
+            "Single-origin Munnar high-grown hills aromatic tea leaves.",
+            "cat_drinks", "brand_tata", "tea", 0xFFDCFCE7, 4.7, 1520, false,
+            listOf(
+                v("p194", 1, "500 g", 230.0, 195.0, 17.0, 30)
+            ),
+            "Beverages", "Tea"
+        ),
+        p(
+            "p195", "Tata I-Shakti Cooking Soda & Poha",
+            "Clean everyday kitchen cooking essentials packed safely.",
+            "cat_staples", "brand_tata", "spice", 0xFFE0F2FE, 4.6, 890, false,
+            listOf(
+                v("p195", 1, "100 g Pack", 32.0, 27.0, 18.0, 50)
+            ),
+            "Foodgrains, Oil & Masala", "Salt, Sugar & Jaggery"
+        ),
+
+        // ITC Ltd Additional Brands (p196..p205)
+        p(
+            "p196", "Sunfeast YiPPee! Magic Masala Noodles",
+            "Long, non-sticky slurpy golden noodles with real dehydrated vegetables.",
+            "cat_snacks", "brand_itc", "noodles", 0xFFFFEDD5, 4.8, 3620, true,
+            listOf(
+                v("p196", 1, "Pack of 4 (240 g)", 60.0, 52.0, 18.0, 58)
+            ),
+            "Snacks & Branded Foods", "Noodle, Pasta, Vermicelli"
+        ),
+        p(
+            "p197", "Bingo! Mad Angles Achaari Masti",
+            "Crunchy triangular corn chips loaded with spicy tangy Indian mango pickle.",
+            "cat_snacks", "brand_itc", "snacks", 0xFFFEF3C7, 4.8, 2940, false,
+            listOf(
+                v("p197", 1, "72.5 g", 20.0, 18.0, 20.0, 64)
+            ),
+            "Snacks & Branded Foods", "Snacks & Namkeen"
+        ),
+        p(
+            "p198", "Vivel Aloe Vera Satin Soft Soap",
+            "Vitamin-E + aloe butter bathing bar nourishing dry skin gently.",
+            "cat_personal", "brand_itc", "soap", 0xFFDCFCE7, 4.6, 1780, false,
+            listOf(
+                v("p198", 1, "Pack of 4 (400 g)", 148.0, 122.0, 20.0, 36)
+            ),
+            "Body Care & Beauty", "Bath & Hand Wash"
+        ),
+        p(
+            "p199", "Nimyle Herbal Floor Cleaner Citrus",
+            "100% natural neem-powered floor disinfectant safe for pets & kids.",
+            "cat_cleaning", "brand_itc", "cleaner", 0xFFDCFCE7, 4.7, 1340, false,
+            listOf(
+                v("p199", 1, "975 ml", 199.0, 159.0, 24.0, 30)
+            ),
+            "Cleaning & Household", "All Purpose Cleaners"
+        ),
+        p(
+            "p200", "Savlon Antiseptic Disinfectant Liquid",
+            "Gentle no-sting wound cleansing & laundry hygiene antiseptic.",
+            "cat_personal", "brand_itc", "spray", 0xFFFFEDD5, 4.8, 2110, false,
+            listOf(
+                v("p200", 1, "500 ml", 215.0, 179.0, 20.0, 38)
+            ),
+            "Body Care & Beauty", "Health & Medicine"
+        ),
+        p(
+            "p201", "Mangaldeep Sandalwood Temple Agarbatti",
+            "Lofty 9-inch long fragrance sticks creating tranquil puja ambience.",
+            "cat_cleaning", "brand_itc", "freshener", 0xFFFEF3C7, 4.8, 1890, false,
+            listOf(
+                v("p201", 1, "90 Sticks", 65.0, 54.0, 22.0, 44)
+            ),
+            "Cleaning & Household", "Pooja Needs"
+        ),
+        p(
+            "p202", "Fiama Gel Bar Celebration Pack",
+            "Conditioning gel bathing bars in Lemongrass, Patchouli & Bearberry.",
+            "cat_personal", "brand_itc", "soap", 0xFFFCE7F3, 4.7, 1450, false,
+            listOf(
+                v("p202", 1, "Pack of 3 (375 g)", 240.0, 192.0, 22.0, 28)
+            ),
+            "Body Care & Beauty", "Bath & Hand Wash"
+        ),
+        p(
+            "p203", "Candyman Tadobaa Fruity Jellies & Eclairs",
+            "Juicy assorted chewy candies and chocolate-centre milk eclairs.",
+            "cat_snacks", "brand_itc", "chocolate", 0xFFE0F2FE, 4.6, 840, false,
+            listOf(
+                v("p203", 1, "200 g Pouch", 50.0, 43.0, 20.0, 45)
+            ),
+            "Snacks & Branded Foods", "Chocolates & Candies"
+        ),
+        p(
+            "p204", "B Natural Mixed Fruit Plus Juice",
+            "Made from 100% Indian fruit pulp with zero concentrate and added fibre.",
+            "cat_drinks", "brand_itc", "juice", 0xFFDCFCE7, 4.7, 1980, false,
+            listOf(
+                v("p204", 1, "1 L Pack", 130.0, 99.0, 24.0, 36)
+            ),
+            "Beverages", "Fruit Juices & Drinks"
+        ),
+        p(
+            "p205", "Engage ON Citrus Pocket Perfume Spray",
+            "Compact 250-spray unisex fragrance pocket bottle for everyday freshness.",
+            "cat_personal", "brand_itc", "freshener", 0xFFE0F2FE, 4.6, 1520, false,
+            listOf(
+                v("p205", 1, "18 ml", 65.0, 55.0, 22.0, 40)
+            ),
+            "Body Care & Beauty", "Fragrances & Deos"
+        ),
+
+        // Nestle India Additional Brands (p206..p207)
+        p(
+            "p206", "Nestea Instant Lemon Iced Tea Mix",
+            "Zesty sun-kissed lemon iced tea powder ready in chilled water in seconds.",
+            "cat_drinks", "brand_nestle", "tea", 0xFFFEF9C3, 4.7, 1420, false,
+            listOf(
+                v("p206", 1, "400 g Pack", 195.0, 165.0, 18.0, 32)
+            ),
+            "Beverages", "Tea"
+        ),
+        p(
+            "p207", "Nescafe Gold Blend Rich Freeze-Dried Coffee",
+            "Crafted with golden roasted Arabica beans for velvety crema & aroma.",
+            "cat_drinks", "brand_nestle", "coffee", 0xFFFEF3C7, 4.9, 2680, true,
+            listOf(
+                v("p207", 1, "95 g Glass Jar", 650.0, 539.0, 19.0, 22)
+            ),
+            "Beverages", "Coffee"
+        ),
+
+        // Reckitt Benckiser Additional Brands (p208..p214)
+        p(
+            "p208", "Veet Silk & Fresh Hair Removal Cream",
+            "Aloe vera & vitamin E sensitive formula giving salon smoothness in 3 mins.",
+            "cat_personal", "brand_reckitt", "skincare", 0xFFE0F2FE, 4.6, 1790, false,
+            listOf(
+                v("p208", 1, "100 g Tube", 240.0, 199.0, 21.0, 28)
+            ),
+            "Baby Care, Female & Hygiene", "Feminine Hygiene"
+        ),
+        p(
+            "p209", "Moov Fast Pain Relief Ayurvedic Cream",
+            "Wintergreen & turpentine warming pain relief cream for back & joint ache.",
+            "cat_personal", "brand_reckitt", "medicine", 0xFFF3E8FF, 4.8, 3120, false,
+            listOf(
+                v("p209", 1, "50 g Tube", 185.0, 155.0, 20.0, 36)
+            ),
+            "Body Care & Beauty", "Health & Medicine"
+        ),
+        p(
+            "p210", "Colin Sparkle Glass & Surface Cleaner",
+            "2x shine booster liquid spray removing smudges from mirrors, TVs & glass.",
+            "cat_cleaning", "brand_reckitt", "spray", 0xFFE0F2FE, 4.8, 2840, true,
+            listOf(
+                v("p210", 1, "500 ml Trigger", 115.0, 96.0, 22.0, 44)
+            ),
+            "Cleaning & Household", "All Purpose Cleaners"
+        ),
+        p(
+            "p211", "Vanish Oxi Action Stain Remover Powder",
+            "Active oxygen fabric stain lifter safe on coloured and white garments.",
+            "cat_cleaning", "brand_reckitt", "cleaner", 0xFFFCE7F3, 4.7, 1620, false,
+            listOf(
+                v("p211", 1, "400 g Pack", 240.0, 198.0, 21.0, 26)
+            ),
+            "Cleaning & Household", "Detergents & Dishwash"
+        ),
+        p(
+            "p212", "Airwick Freshmatic Automatic Mist Refill",
+            "Essential oil lavender & chamomile air freshener lasting up to 70 days.",
+            "cat_cleaning", "brand_reckitt", "freshener", 0xFFDCFCE7, 4.7, 1480, false,
+            listOf(
+                v("p212", 1, "250 ml Refill", 265.0, 219.0, 22.0, 24)
+            ),
+            "Cleaning & Household", "Fresheners & Repellents"
+        ),
+        p(
+            "p213", "Cherry Blossom Black Paste Shoe Polish",
+            "Rich wax shine nourishing leather shoes and sealing water resistance.",
+            "cat_cleaning", "brand_reckitt", "cleaner", 0xFFFEE2E2, 4.7, 1180, false,
+            listOf(
+                v("p213", 1, "40 g Tin", 75.0, 63.0, 20.0, 35)
+            ),
+            "Cleaning & Household", "Car & Shoe Care"
+        ),
+        p(
+            "p214", "Durex Air Ultra Thin Protection (10s)",
+            "Ultra-fine transparent protection dermatologically tested for comfort.",
+            "cat_personal", "brand_reckitt", "medicine", 0xFFE0F2FE, 4.8, 1920, false,
+            listOf(
+                v("p214", 1, "Pack of 10", 260.0, 215.0, 22.0, 30)
+            ),
+            "Body Care & Beauty", "Sexual Wellness"
+        ),
+
+        // Godrej Consumer Products Additional Brands (p215..p218)
+        p(
+            "p215", "Godrej No.1 Jasmine & Milk Cream Soap",
+            "Grade-1 pure vegetable oil soap crafted for traditional natural glow.",
+            "cat_personal", "brand_godrej", "soap", 0xFFDCFCE7, 4.7, 2940, false,
+            listOf(
+                v("p215", 1, "Pack of 4 (400 g)", 130.0, 108.0, 20.0, 48)
+            ),
+            "Body Care & Beauty", "Bath & Hand Wash"
+        ),
+        p(
+            "p216", "HIT Flying Insect Killer Red Spray",
+            "Instant deep-reach knock-down aerosol spray against hidden mosquitoes & flies.",
+            "cat_cleaning", "brand_godrej", "spray", 0xFFFEF3C7, 4.8, 3210, true,
+            listOf(
+                v("p216", 1, "400 ml", 240.0, 208.8, 14.9, 42),
+                v("p216", 2, "625 ml Jumbo", 360.0, 299.0, 18.0, 20)
+            ),
+            "Cleaning & Household", "Fresheners & Repellents"
+        ),
+        p(
+            "p217", "Godrej Aer Twist Jasmine Delight Gel",
+            "Leak-proof designer room & car freshener lasting up to 60 days.",
+            "cat_cleaning", "brand_godrej", "freshener", 0xFFE0F2FE, 4.7, 1760, false,
+            listOf(
+                v("p217", 1, "180 ml", 99.0, 76.23, 29.8, 38)
+            ),
+            "Cleaning & Household", "Fresheners & Repellents"
+        ),
+        p(
+            "p218", "Godrej Protekt Masterblaster Handwash Refill",
+            "Citrus-extract 99.9% germ protection foamy handwash value refill pouch.",
+            "cat_personal", "brand_godrej", "soap", 0xFFE0F2FE, 4.8, 1650, false,
+            listOf(
+                v("p218", 1, "675 ml Pouch", 99.0, 79.2, 25.0, 44)
+            ),
+            "Body Care & Beauty", "Bath & Hand Wash"
+        ),
+
+        // Marico Ltd Additional Brands (p219..p222)
+        p(
+            "p219", "Hair & Care Triple Blend Non-Sticky Oil",
+            "Light fruit vitamins + olive + green tea nourishing daily hair oil.",
+            "cat_personal", "brand_marico", "hairoil", 0xFFDCFCE7, 4.7, 1980, false,
+            listOf(
+                v("p219", 1, "300 ml", 175.0, 142.0, 22.0, 34)
+            ),
+            "Body Care & Beauty", "Hair Care"
+        ),
+        p(
+            "p220", "Set Wet Cool Avatar Styling Hair Gel",
+            "Vertical hold alcohol-free styling gel with Pro-Vitamin B5 shine.",
+            "cat_personal", "brand_marico", "grooming", 0xFFDCFCE7, 4.6, 1540, false,
+            listOf(
+                v("p220", 1, "250 ml", 199.0, 159.0, 24.0, 28)
+            ),
+            "Body Care & Beauty", "Men's Grooming"
+        ),
+        p(
+            "p221", "Parachute Advansed Gold Coconut Hair Oil",
+            "Pure coconut enriched with Vitamin E for 2x deeper root nourishment.",
+            "cat_personal", "brand_marico", "hairoil", 0xFFFEF3C7, 4.8, 2210, false,
+            listOf(
+                v("p221", 1, "400 ml", 220.0, 179.0, 21.0, 32)
+            ),
+            "Body Care & Beauty", "Hair Care"
+        ),
+        p(
+            "p222", "Livon Anti-Frizz Hair Serum",
+            "Moroccan argan oil serum giving salon silky tangle-free gloss instantly.",
+            "cat_personal", "brand_marico", "hairoil", 0xFFFCE7F3, 4.8, 3140, true,
+            listOf(
+                v("p222", 1, "100 ml", 390.0, 248.0, 36.0, 28)
+            ),
+            "Body Care & Beauty", "Hair Care"
+        ),
+
+        // Pepsico India Additional Brands (p223..p224)
+        p(
+            "p223", "Doritos Nacho Cheese Tortilla Chips",
+            "Bold triangular crunchy corn nachos blasted with tangy cheddar cheese.",
+            "cat_snacks", "brand_pepsico", "snacks", 0xFFFEE2E2, 4.8, 2870, true,
+            listOf(
+                v("p223", 1, "82.5 g", 50.0, 44.0, 18.0, 46)
+            ),
+            "Snacks & Branded Foods", "Snacks & Namkeen"
+        ),
+        p(
+            "p224", "Uncle Chipps Spicy Treat Potato Chips",
+            "Classic nostalgic crinkled potato wafers — Bole Mere Lips, I Love Uncle Chipps!",
+            "cat_snacks", "brand_pepsico", "snacks", 0xFFDCFCE7, 4.7, 2340, false,
+            listOf(
+                v("p224", 1, "50 g", 20.0, 18.0, 18.0, 52)
+            ),
+            "Snacks & Branded Foods", "Snacks & Namkeen"
+        ),
+
+        // Additional Oil & Ghee, Noodles & Pasta, Spices & Grains for Past Orders 2-Row Shelf (p225..p236)
+        p(
+            "p225", "Fortune Premium Kachi Ghani Pure Mustard Oil",
+            "Cold-pressed pungent mustard oil rich in Omega-3 for traditional Indian curries and pickles.",
+            "cat_oil", "brand_adani", "oil", 0xFFFEF3C7, 4.8, 3420, true,
+            listOf(
+                v("p225", 1, "910 g", 215.0, 206.0, 14.0, 44),
+                v("p225", 2, "5 L Jar", 1100.0, 1055.0, 15.0, 18)
+            ),
+            "Foodgrains, Oil & Masala", "Edible Oils & Ghee"
+        ),
+        p(
+            "p226", "Fortune Rice Bran Health Oil",
+            "Heart-friendly physically refined rice bran cooking oil with natural Oryzanol antioxidants.",
+            "cat_oil", "brand_adani", "oil", 0xFFFFF7ED, 4.7, 2610, true,
+            listOf(
+                v("p226", 1, "870 g", 225.0, 188.0, 18.0, 38),
+                v("p226", 2, "5 L Jar", 1120.0, 965.0, 19.0, 14)
+            ),
+            "Foodgrains, Oil & Masala", "Edible Oils & Ghee"
+        ),
+        p(
+            "p227", "Fortune Plus Soyabean Refined Oil",
+            "Light, odourless refined soyabean oil fortified with Vitamins A & D for everyday sabzis.",
+            "cat_oil", "brand_adani", "oil", 0xFFFEF9C3, 4.7, 2890, false,
+            listOf(
+                v("p227", 1, "910 g", 185.0, 173.0, 15.0, 50),
+                v("p227", 2, "5 L Jar", 960.0, 889.0, 16.0, 20)
+            ),
+            "Foodgrains, Oil & Masala", "Edible Oils & Ghee"
+        ),
+        p(
+            "p228", "Saffola Active Pro Weight Watchers Oil",
+            "Dual-seed blended rice bran & soyabean oil with LOSORB technology for lighter frying.",
+            "cat_oil", "brand_marico", "oil", 0xFFFFEDD5, 4.8, 2190, true,
+            listOf(
+                v("p228", 1, "850 g", 210.0, 178.0, 18.0, 34),
+                v("p228", 2, "5 L Jar", 1150.0, 999.0, 19.0, 15)
+            ),
+            "Foodgrains, Oil & Masala", "Edible Oils & Ghee"
+        ),
+        p(
+            "p229", "Maggi 2-Minute Masala Instant Noodles Pack",
+            "India's favourite 2-minute masala noodles made with roasted spices and quality wheat.",
+            "cat_snacks", "brand_nestle", "noodles", 0xFFFEF9C3, 4.9, 6420, true,
+            listOf(
+                v("p229", 1, "420 g", 90.0, 80.0, 16.0, 65),
+                v("p229", 2, "560 g", 120.0, 106.0, 17.0, 42)
+            ),
+            "Snacks & Branded Foods", "Noodle, Pasta, Vermicelli"
+        ),
+        p(
+            "p230", "Maggi 2-Minute Masala Single Pack",
+            "Quick solo hunger-buster pack of classic Maggi 2-minute masala noodles.",
+            "cat_snacks", "brand_nestle", "noodles", 0xFFFEF08A, 4.9, 5180, false,
+            listOf(
+                v("p230", 1, "70 g", 15.0, 15.0, 14.0, 95),
+                v("p230", 2, "140 g", 30.0, 30.0, 15.0, 75)
+            ),
+            "Snacks & Branded Foods", "Noodle, Pasta, Vermicelli"
+        ),
+        p(
+            "p231", "Maggi Nutri-Licious Veg Atta Masala Noodles",
+            "Wholesome whole-wheat atta noodles loaded with colourful veggies and aromatic 20-spice tastemaker.",
+            "cat_snacks", "brand_nestle", "noodles", 0xFFDCFCE7, 4.8, 2740, true,
+            listOf(
+                v("p231", 1, "290 g", 108.0, 108.0, 18.0, 40)
+            ),
+            "Snacks & Branded Foods", "Noodle, Pasta, Vermicelli"
+        ),
+        p(
+            "p232", "Sunfeast YiPPee! Pasta Treat Creamy Cheese",
+            "100% suji durum wheat spiral pasta in rich creamy cheddar sauce ready in 5 minutes.",
+            "cat_snacks", "brand_itc", "noodles", 0xFFFFEDD5, 4.6, 1840, false,
+            listOf(
+                v("p232", 1, "70 g", 35.0, 30.0, 20.0, 48)
+            ),
+            "Snacks & Branded Foods", "Noodle, Pasta, Vermicelli"
+        ),
+        p(
+            "p233", "Tata Sampann Rich Aroma Garam Masala",
+            "Chef-crafted whole spice blend with natural essential oils intact for royal gravies.",
+            "cat_oil", "brand_tata", "spice", 0xFFFEE2E2, 4.8, 2410, true,
+            listOf(
+                v("p233", 1, "100 g", 98.0, 82.0, 22.0, 46)
+            ),
+            "Foodgrains, Oil & Masala", "Masalas & Spices"
+        ),
+        p(
+            "p234", "Tata Sampann Coriander Powder (Dhaniya)",
+            "Coarsely ground green Kota coriander seeds with fresh citrusy aroma and natural oils.",
+            "cat_oil", "brand_tata", "spice", 0xFFDCFCE7, 4.7, 1930, false,
+            listOf(
+                v("p234", 1, "200 g", 78.0, 65.0, 21.0, 52)
+            ),
+            "Foodgrains, Oil & Masala", "Masalas & Spices"
+        ),
+        p(
+            "p235", "Fortune Sulphurless Refined White Sugar",
+            "Pure, hygienic, touch-free refined crystal sugar dissolving quickly in tea and desserts.",
+            "cat_staples", "brand_adani", "rice", 0xFFF0F9FF, 4.7, 3120, false,
+            listOf(
+                v("p235", 1, "1 kg", 65.0, 54.0, 17.0, 60),
+                v("p235", 2, "5 kg", 310.0, 259.0, 18.0, 28)
+            ),
+            "Foodgrains, Oil & Masala", "Salt, Sugar & Jaggery"
+        ),
+        p(
+            "p236", "Fortune Everyday Full Grain Basmati Rice",
+            "Aged long-grain aromatic basmati rice fluffy and non-sticky for jeera rice and pulao.",
+            "cat_staples", "brand_adani", "rice", 0xFFFEF9C3, 4.7, 2540, true,
+            listOf(
+                v("p236", 1, "1 kg", 145.0, 118.0, 20.0, 44),
+                v("p236", 2, "5 kg", 695.0, 549.0, 21.0, 20)
+            ),
+            "Foodgrains, Oil & Masala", "Rice & Rice Products"
+        ),
+
+        // Stationery, Toys & Gifts (p237..p240)
+        p(
+            "p237", "Classmate Pulse 6-Subject Spiral Notebook & Octane Gel Pens",
+            "Smooth elemental chlorine-free ruled pages bundled with 5 waterproof blue gel pens.",
+            "cat_cleaning", "brand_itc", "stationery", 0xFFE0F2FE, 4.8, 1980, true,
+            listOf(
+                v("p237", 1, "300 Pages + 5 Pens", 230.0, 189.0, 22.0, 38)
+            ),
+            "Stationery, Toys & Gifts", "Notebooks, Pens & School Supplies"
+        ),
+        p(
+            "p238", "Classmate Colour Crew Art Sketch Pens & Crayons Studio Kit",
+            "Non-toxic washable sketch pens, oil pastels, and geometry set for school & office creativity.",
+            "cat_cleaning", "brand_itc", "stationery", 0xFFFEF3C7, 4.7, 1460, false,
+            listOf(
+                v("p238", 1, "24 Shades Kit", 199.0, 165.0, 24.0, 32)
+            ),
+            "Stationery, Toys & Gifts", "Office & Art Stationery"
+        ),
+        p(
+            "p239", "Kinder Joy Collectible Toy & Crispy Cocoa Wafer Bites Pack",
+            "Exciting buildable surprise toy paired with milky & cocoa cream crispy wafer balls.",
+            "cat_snacks", "brand_ferrero", "chocolate", 0xFFFFEDD5, 4.8, 3120, true,
+            listOf(
+                v("p239", 1, "Pack of 3 (60 g)", 150.0, 138.0, 16.0, 45)
+            ),
+            "Stationery, Toys & Gifts", "Toys, Games & Puzzles"
+        ),
+        p(
+            "p240", "Cadbury Celebrations Premium Assorted Chocolate Gift Hamper",
+            "Festive ribbon-wrapped gift box filled with Dairy Milk, 5 Star, Gems, and Nutties.",
+            "cat_snacks", "brand_mondelez", "chocolate", 0xFFF3E8FF, 4.9, 4590, true,
+            listOf(
+                v("p240", 1, "178.2 g Gift Box", 200.0, 175.0, 20.0, 50),
+                v("p240", 2, "334 g Grand Box", 400.0, 349.0, 22.0, 26)
+            ),
+            "Stationery, Toys & Gifts", "Gift Hampers & Wrapping"
+        ),
+
+        // Paper Goods & Disposables (p241..p244)
+        p(
+            "p241", "Savlon Ultra-Soft 2-Ply Facial Tissues & Kitchen Towel Combo",
+            "Highly absorbent virgin pulp facial tissue box paired with perforated kitchen roll.",
+            "cat_cleaning", "brand_itc", "cleaner", 0xFFE0F2FE, 4.7, 1740, true,
+            listOf(
+                v("p241", 1, "200 Pulls + 2 Rolls", 220.0, 169.0, 25.0, 42)
+            ),
+            "Paper Goods & Disposables", "Tissues, Napkins & Kitchen Rolls"
+        ),
+        p(
+            "p242", "Tata Kitchen Eco Bagasse Party Plates, Bowls & Paper Cups",
+            "100% compostable leak-proof sugarcane bagasse dinner plates and hot/cold paper cups.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFECFDF5, 4.7, 1380, false,
+            listOf(
+                v("p242", 1, "Pack of 25 + 25", 210.0, 168.0, 24.0, 36)
+            ),
+            "Paper Goods & Disposables", "Paper Plates, Cups & Cutlery"
+        ),
+        p(
+            "p243", "Tata Kitchen Fresh-Lock Food Grade Aluminium Foil Roll",
+            "Thick tear-resistant 18-micron aluminium wrap keeping rotis and tiffins piping hot.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFF1F5F9, 4.8, 2240, true,
+            listOf(
+                v("p243", 1, "25 Metres", 249.0, 189.0, 24.0, 40),
+                v("p243", 2, "72 Metres Jumbo", 599.0, 459.0, 25.0, 18)
+            ),
+            "Paper Goods & Disposables", "Aluminium Foil & Food Wraps"
+        ),
+        p(
+            "p244", "Godrej Protekt Oxo-Biodegradable Drawstring Garbage Bags",
+            "Tear-proof leak-guard hygiene bin liners with convenient tie-tape drawstrings.",
+            "cat_cleaning", "brand_godrej", "cleaner", 0xFFDCFCE7, 4.8, 2610, false,
+            listOf(
+                v("p244", 1, "Medium (30 Bags x 2)", 190.0, 149.0, 25.0, 54)
+            ),
+            "Paper Goods & Disposables", "Garbage Bags & Bin Liners"
+        ),
+
+        // Industrial & Catering (p245..p248)
+        p(
+            "p245", "Fortune Sunlite Refined Sunflower Oil HoReCa Catering Tin",
+            "High-smoke-point commercial catering tin crafted for restaurants, cloud kitchens, and banquets.",
+            "cat_oil", "brand_adani", "oil", 0xFFFEF9C3, 4.8, 1890, true,
+            listOf(
+                v("p245", 1, "15 L Catering Tin", 2390.0, 2099.0, 16.0, 22)
+            ),
+            "Industrial & Catering", "Bulk HoReCa Oils & Staples"
+        ),
+        p(
+            "p246", "MAGGI Professional Rich Tomato Ketchup HoReCa Spout Pack",
+            "Thick institutional culinary tomato ketchup and chef seasoning spout pouch for catering.",
+            "cat_snacks", "brand_nestle", "spread", 0xFFFEE2E2, 4.8, 1620, true,
+            listOf(
+                v("p246", 1, "1 kg Catering Pouch", 145.0, 118.0, 22.0, 40),
+                v("p246", 2, "5 kg Bulk Can", 650.0, 529.0, 24.0, 16)
+            ),
+            "Industrial & Catering", "Commercial Sauces & Seasonings"
+        ),
+        p(
+            "p247", "Tata Kitchen Heavy-Duty Silver Foil Meal Containers with Lids",
+            "Stackable 450 ml thermal delivery & buffet catering containers with tight board lids.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFF8FAFC, 4.7, 1290, false,
+            listOf(
+                v("p247", 1, "Pack of 50 Trays", 360.0, 279.0, 26.0, 30)
+            ),
+            "Industrial & Catering", "Catering Containers & Packaging"
+        ),
+        p(
+            "p248", "Lizol Commercial 10X Disinfectant Floor & Kitchen Cleaner Can",
+            "Industrial-grade citrus surface sanitizer eliminating 99.9% germs across hotels and offices.",
+            "cat_cleaning", "brand_reckitt", "cleaner", 0xFFFEF3C7, 4.9, 2450, true,
+            listOf(
+                v("p248", 1, "5 L Commercial Can", 920.0, 749.0, 24.0, 24)
+            ),
+            "Industrial & Catering", "Institutional Cleaning & Hygiene"
+        ),
+
+        // Ayurveda, Health & Wellness (p249..p252)
+        p(
+            "p249", "Dabur Chyawanprash Awaleha 40+ Ayurvedic Herbs Immunity Booster",
+            "Time-tested Amla, Ashwagandha, and Giloy Rasayana formula supporting daily family immunity.",
+            "cat_personal", "brand_dabur", "medicine", 0xFFFEE2E2, 4.9, 5120, true,
+            listOf(
+                v("p249", 1, "950 g Jar", 425.0, 369.0, 18.0, 42),
+                v("p249", 2, "2 kg Value Jar", 820.0, 699.0, 20.0, 20)
+            ),
+            "Ayurveda, Health & Wellness", "Chyawanprash & Immunity"
+        ),
+        p(
+            "p250", "Dabur Cold-Pressed Amla & Giloy Neem Tulsi Ayurvedic Juice",
+            "100% pure cold-pressed herbal wellness tonic with no added sugar for daily detox & vitality.",
+            "cat_drinks", "brand_dabur", "juice", 0xFFDCFCE7, 4.8, 2340, true,
+            listOf(
+                v("p250", 1, "1 L Bottle", 290.0, 235.0, 22.0, 36)
+            ),
+            "Ayurveda, Health & Wellness", "Ayurvedic Juices & Tonics"
+        ),
+        p(
+            "p251", "Dabur Hajmola Regular & Imli Ayurvedic Digestive Tablets",
+            "Chatpata black-salt, jeera, and ginger herbal tablets supporting post-meal digestion.",
+            "cat_personal", "brand_dabur", "medicine", 0xFFFEF3C7, 4.8, 3890, false,
+            listOf(
+                v("p251", 1, "120 Tablets Bottle", 70.0, 62.0, 18.0, 64)
+            ),
+            "Ayurveda, Health & Wellness", "Herbal Supplements & Digestives"
+        ),
+        p(
+            "p252", "Moov 100% Ayurvedic Rapid Action Back & Muscle Pain Relief Spray",
+            "Wintergreen oil, Nilgiri, and Turpentine herbal formula offering deep warmth relief.",
+            "cat_personal", "brand_reckitt", "medicine", 0xFFF3E8FF, 4.8, 2980, true,
+            listOf(
+                v("p252", 1, "80 g Spray", 295.0, 249.0, 20.0, 38)
+            ),
+            "Ayurveda, Health & Wellness", "Pain Relief & First Aid"
+        ),
+        p(
+            "p253", "Croma 1.5 L Stainless Steel Electric Kettle & Kitchen Essentials",
+            "1500W auto cut-off rapid-boil cordless electric kettle for tea, coffee, and instant soups.",
+            "cat_cleaning", "brand_tata", "electrical", 0xFFE0F2FE, 4.7, 1580, true,
+            listOf(
+                v("p253", 1, "1.5 L Kettle", 1299.0, 749.0, 22.0, 26)
+            ),
+            "Electronic Appliances, Home & Kitchen Essentials", "Home & Kitchen Appliances"
+        ),
+        p(
+            "p254", "Croma 20W Fast USB-C PD Wall Charger Adapter",
+            "Compact surge-safe fast charger compatible with smartphones, earbuds, and tablets.",
+            "cat_cleaning", "brand_tata", "electrical", 0xFFE0F2FE, 4.7, 1140, false,
+            listOf(
+                v("p254", 1, "20W Adapter", 999.0, 549.0, 24.0, 34)
+            ),
+            "Electronic Appliances, Home & Kitchen Essentials", "Electrical Accessories"
+        ),
+        p(
+            "p255", "Croma 1000W Non-Stick Lightweight Dry Iron",
+            "Golden Weilburger non-stick soleplate with 360-degree swivel cord and thermal fuse.",
+            "cat_cleaning", "brand_tata", "electrical", 0xFFF1F5F9, 4.6, 890, false,
+            listOf(
+                v("p255", 1, "1000W Iron", 1100.0, 699.0, 22.0, 20)
+            ),
+            "Electronic Appliances, Home & Kitchen Essentials", "Home & Kitchen Appliances"
+        ),
+        p(
+            "p256", "Tata Kitchen Tri-Ply Heavy Stainless Steel Kadhai with Lid",
+            "Induction-friendly even-heating stainless steel kadhai with toughened glass lid.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFF8FAFC, 4.8, 1340, true,
+            listOf(
+                v("p256", 1, "2.5 L Kadhai", 1699.0, 1199.0, 22.0, 18)
+            ),
+            "Kitchen, Garden & Pets", "Steel Utensils"
+        ),
+        p(
+            "p257", "Tata Kitchen Airtight Modular Pantry Storage Jars (Set of 6)",
+            "Crystal-clear BPA-free stackable kitchen containers keeping pulses and snacks crisp.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFE0F2FE, 4.7, 1620, true,
+            listOf(
+                v("p257", 1, "6 x 1100 ml", 799.0, 549.0, 25.0, 32)
+            ),
+            "Kitchen, Garden & Pets", "Storage & Accessories"
+        ),
+        p(
+            "p258", "Godrej Garden Pure Neem Cake Organic Plant Manure",
+            "100% natural cold-pressed neem khali fertilizer protecting balcony & terrace plants.",
+            "cat_cleaning", "brand_godrej", "garden", 0xFFDCFCE7, 4.7, 940, false,
+            listOf(
+                v("p258", 1, "1 kg Pouch", 180.0, 135.0, 25.0, 38)
+            ),
+            "Kitchen, Garden & Pets", "Gardening"
+        ),
+        p(
+            "p259", "Tata Kitchen Vacuum Insulated Hot & Cold Steel Flask",
+            "24-hour temperature lock 304-grade stainless steel travel & kitchen water bottle.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFE2E8F0, 4.8, 1790, false,
+            listOf(
+                v("p259", 1, "1000 ml Flask", 999.0, 749.0, 22.0, 28)
+            ),
+            "Kitchen, Garden & Pets", "Steel Utensils"
+        ),
+        p(
+            "p260", "Godrej Garden Low-EC Coco Peat Expanding Potting Block",
+            "Washed organic coconut coir block expanding to 5 kg moisture-retaining potting mix.",
+            "cat_cleaning", "brand_godrej", "garden", 0xFFFEF3C7, 4.6, 820, false,
+            listOf(
+                v("p260", 1, "1 kg Block", 160.0, 119.0, 26.0, 40)
+            ),
+            "Kitchen, Garden & Pets", "Gardening"
+        ),
+        p(
+            "p261", "Godrej Real Good Chicken Breast Boneless Filosofi Cut",
+            "Tender high-protein chilled boneless chicken breast fillets hygienically vacuum-packed.",
+            "cat_frozen", "brand_godrej", "meat", 0xFFFEE2E2, 4.8, 2140, true,
+            listOf(
+                v("p261", 1, "450 g Pack", 240.0, 199.0, 18.0, 26)
+            ),
+            "Eggs, Meat & Fish", "Poultry", isVeg = false
+        ),
+        p(
+            "p262", "Godrej Real Good Farm-Fresh Brown Protein Eggs",
+            "Naturally nutrient-rich UV-sanitized brown shell eggs in protective pulp tray.",
+            "cat_frozen", "brand_godrej", "eggs", 0xFFFEF3C7, 4.8, 1980, true,
+            listOf(
+                v("p262", 1, "12 Eggs Tray", 155.0, 129.0, 17.0, 36)
+            ),
+            "Eggs, Meat & Fish", "Eggs", isVeg = false
+        ),
+        p(
+            "p263", "Godrej Real Good Herb & Garlic Chicken Seekh Kebab",
+            "Juicy minced chicken kebabs seasoned with fresh mint, coriander, and roasted spices.",
+            "cat_frozen", "brand_godrej", "meat", 0xFFFFEDD5, 4.7, 1340, false,
+            listOf(
+                v("p263", 1, "400 g Pack", 275.0, 229.0, 20.0, 24)
+            ),
+            "Eggs, Meat & Fish", "Sausages, Bacon & Salami", isVeg = false
+        ),
+        p(
+            "p264", "Pampers All-Round Protection Pants Diapers (Large)",
+            "Up to 12 hours overnight dryness with aloe-infused anti-rash blanket.",
+            "cat_personal", "brand_pg", "baby", 0xFFE0F2FE, 4.9, 3190, true,
+            listOf(
+                v("p264", 1, "L • 44 Pants", 799.0, 629.0, 20.0, 30)
+            ),
+            "Baby Care, Female & Hygiene", "Diapers & Wipes"
+        ),
+        p(
+            "p265", "Whisper Bindazzz Nights Koala Soft XXL+ Pads",
+            "Wider back & 0% leak protection overnight sanitary pads for worry-free sleep.",
+            "cat_personal", "brand_pg", "soap", 0xFFFCE7F3, 4.8, 2460, true,
+            listOf(
+                v("p265", 1, "XXL+ 15 Pads", 290.0, 235.0, 21.0, 34)
+            ),
+            "Baby Care, Female & Hygiene", "Feminine Hygiene"
+        ),
+        p(
+            "p266", "Classmate Asteroid Precision Steel Mathematical Geometry Box",
+            "Die-cast self-centering compass, divider, and shatter-resistant ruler exam kit.",
+            "cat_cleaning", "brand_itc", "stationery", 0xFFE0F2FE, 4.8, 1890, false,
+            listOf(
+                v("p266", 1, "1 Tin Box", 250.0, 215.0, 20.0, 36)
+            ),
+            "Stationery, Toys & Gifts", "Notebooks, Pens & School Supplies"
+        ),
+        p(
+            "p267", "Classmate Hook Smooth-Flow Ball Pens Desk Jar",
+            "0.7 mm German-ink smudge-free ball pens in blue, black, and red for office & study.",
+            "cat_cleaning", "brand_itc", "stationery", 0xFFF0F9FF, 4.7, 1520, false,
+            listOf(
+                v("p267", 1, "Jar of 25 Pens", 250.0, 199.0, 22.0, 44)
+            ),
+            "Stationery, Toys & Gifts", "Office & Art Stationery"
+        ),
+        p(
+            "p268", "Cadbury Gems Giant Surprise Collectible Toy Ball",
+            "Colourful chocolate buttons paired with a collectible panda/superhero buildable toy.",
+            "cat_snacks", "brand_mondelez", "chocolate", 0xFFFCE7F3, 4.7, 2240, false,
+            listOf(
+                v("p268", 1, "Pack of 2 Balls", 120.0, 105.0, 18.0, 48)
+            ),
+            "Stationery, Toys & Gifts", "Toys, Games & Puzzles"
+        ),
+        p(
+            "p269", "Ferrero Rocher Golden Moments 16-Piece Luxury Gift Box",
+            "Iconic golden-wrapped whole hazelnut & milk chocolate pralines in a crystal gift box.",
+            "cat_snacks", "brand_ferrero", "chocolate", 0xFFFEF3C7, 4.9, 3840, true,
+            listOf(
+                v("p269", 1, "200 g (16 Pcs)", 595.0, 529.0, 16.0, 26)
+            ),
+            "Stationery, Toys & Gifts", "Gift Hampers & Wrapping"
+        ),
+        p(
+            "p270", "Savlon Ultra-Soft Pocket Handkerchief Tissues",
+            "Skin-friendly 3-ply travel pocket tissue packs gentle on sensitive skin.",
+            "cat_cleaning", "brand_itc", "cleaner", 0xFFE0F2FE, 4.7, 1180, false,
+            listOf(
+                v("p270", 1, "Pack of 10 (100 Pulls)", 120.0, 95.0, 24.0, 50)
+            ),
+            "Paper Goods & Disposables", "Tissues, Napkins & Kitchen Rolls"
+        ),
+        p(
+            "p271", "Tata Kitchen Eco Birchwood Disposable Forks & Spoons",
+            "Splinter-free biodegradable natural birchwood party & picnic cutlery pack.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFFEF3C7, 4.6, 970, false,
+            listOf(
+                v("p271", 1, "50 Pcs Combo", 160.0, 125.0, 25.0, 42)
+            ),
+            "Paper Goods & Disposables", "Paper Plates, Cups & Cutlery"
+        ),
+        p(
+            "p272", "Tata Kitchen Non-Stick Butter Baking & Wrapping Paper",
+            "Oven-safe greaseproof food wrapping paper roll for sandwiches, rotis, and baking.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFFFFBEB, 4.8, 1650, true,
+            listOf(
+                v("p272", 1, "25 Metres Roll", 230.0, 179.0, 24.0, 38)
+            ),
+            "Paper Goods & Disposables", "Aluminium Foil & Food Wraps"
+        ),
+        p(
+            "p273", "Godrej Protekt Heavy-Duty Large Kitchen Bin Liners",
+            "Extra-thick 24x32 inch puncture-resistant black trash bags for jumbo dustbins.",
+            "cat_cleaning", "brand_godrej", "cleaner", 0xFFDCFCE7, 4.7, 1490, false,
+            listOf(
+                v("p273", 1, "Large (30 Bags)", 180.0, 139.0, 25.0, 46)
+            ),
+            "Paper Goods & Disposables", "Garbage Bags & Bin Liners"
+        ),
+        p(
+            "p274", "Aashirvaad Select Sharbati Atta HoReCa Catering Bag",
+            "100% MP Sharbati wheat commercial sack yielding soft rotis for messes and caterers.",
+            "cat_staples", "brand_itc", "atta", 0xFFFEF3C7, 4.9, 2120, true,
+            listOf(
+                v("p274", 1, "10 kg Catering Bag", 620.0, 539.0, 16.0, 28)
+            ),
+            "Industrial & Catering", "Bulk HoReCa Oils & Staples"
+        ),
+        p(
+            "p275", "Kissan Fresh Tomato Ketchup Commercial Catering Jerrycan",
+            "100% real ripe tomatoes rich culinary ketchup in an easy-pour HoReCa can.",
+            "cat_snacks", "brand_hul", "spread", 0xFFFEE2E2, 4.8, 1740, false,
+            listOf(
+                v("p275", 1, "5 kg Jerrycan", 610.0, 489.0, 22.0, 20)
+            ),
+            "Industrial & Catering", "Commercial Sauces & Seasonings"
+        ),
+        p(
+            "p276", "Tata Kitchen Clear Hinged Food Parcel Boxes (Pack of 50)",
+            "Snap-lock leak-resistant takeaway containers for bakery, salads, and catering counters.",
+            "cat_cleaning", "brand_tata", "kitchen", 0xFFF1F5F9, 4.7, 1110, false,
+            listOf(
+                v("p276", 1, "500 ml x 50 Pcs", 340.0, 259.0, 26.0, 32)
+            ),
+            "Industrial & Catering", "Catering Containers & Packaging"
+        ),
+        p(
+            "p277", "Harpic Power Plus Commercial Washroom Disinfectant Can",
+            "Bulk institutional 5-litre thick limescale & germ remover for offices and restaurants.",
+            "cat_cleaning", "brand_reckitt", "cleaner", 0xFFE0F2FE, 4.8, 1960, true,
+            listOf(
+                v("p277", 1, "5 L Institutional", 890.0, 719.0, 23.0, 22)
+            ),
+            "Industrial & Catering", "Institutional Cleaning & Hygiene"
+        ),
+        p(
+            "p278", "Dabur Honitus Tulsi & Honey Ayurvedic Cough Remedy",
+            "Non-drowsy herbal relief with Mulethi, Banapsha, and Shunthi for sore throat.",
+            "cat_personal", "brand_dabur", "medicine", 0xFFFEF3C7, 4.8, 3420, true,
+            listOf(
+                v("p278", 1, "100 ml Bottle", 125.0, 108.0, 18.0, 48)
+            ),
+            "Ayurveda, Health & Wellness", "Pain Relief & First Aid"
+        ),
+        p(
+            "p279", "Dabur Ratnaprash Sugarfree Saffron & Moti Immunity Formula",
+            "Zero-added-sugar Ayurvedic Rasayana enriched with kesar, moti, and brahmi.",
+            "cat_personal", "brand_dabur", "medicine", 0xFFFEE2E2, 4.8, 1840, false,
+            listOf(
+                v("p279", 1, "900 g Jar", 595.0, 489.0, 20.0, 24)
+            ),
+            "Ayurveda, Health & Wellness", "Chyawanprash & Immunity"
+        ),
+        p(
+            "p280", "Dabur Cold-Pressed Aloe Vera & Wheatgrass Wellness Juice",
+            "Fibre-rich green Ayurvedic juice supporting radiant skin, gut health, and metabolism.",
+            "cat_drinks", "brand_dabur", "juice", 0xFFDCFCE7, 4.7, 1690, false,
+            listOf(
+                v("p280", 1, "1 L Bottle", 310.0, 249.0, 22.0, 32)
+            ),
+            "Ayurveda, Health & Wellness", "Ayurvedic Juices & Tonics"
+        ),
+        p(
+            "p281", "Dabur Pudin Hara Active Mint Ayurvedic Indigestion Pearls",
+            "Fast-cooling pudina satva herbal pearls for gas, acidity, and stomach comfort.",
+            "cat_personal", "brand_dabur", "medicine", 0xFFECFDF5, 4.8, 2870, false,
+            listOf(
+                v("p281", 1, "Pack of 3 Strips (30s)", 90.0, 78.0, 18.0, 56)
+            ),
+            "Ayurveda, Health & Wellness", "Herbal Supplements & Digestives"
         )
-    )
+        )
+    }
 
     val defaultAddresses: List<SavedAddress> = listOf(
         SavedAddress(
             id = "addr_home",
             label = "Home",
-            recipientName = "Aarav Sharma",
+            recipientName = "Ankit",
             phone = "9876543210",
             houseFlat = "Flat 402, Greenview Residency",
             streetArea = "12th Main, Indiranagar",
@@ -1641,7 +2822,7 @@ object SeedCatalogData {
         SavedAddress(
             id = "addr_work",
             label = "Work",
-            recipientName = "Aarav Sharma",
+            recipientName = "Ankit",
             phone = "9876543210",
             houseFlat = "Floor 6, Horizon Tech Park",
             streetArea = "Outer Ring Road, Bellandur",
@@ -1667,49 +2848,51 @@ object SeedCatalogData {
     )
 
     val defaultUserProfile = UserProfile(
-        phone = "",
-        name = "Aarav Sharma",
-        email = "aarav.sharma@example.in",
+        phone = "9876543210",
+        name = "Ankit",
+        email = "ankit@example.in",
         walletBalance = 450.0,
         notificationsEnabled = true,
-        isLoggedIn = false
+        isLoggedIn = true
     )
 
-    val sampleOrders: List<OrderRecord> = listOf(
-        OrderRecord(
-            id = "QK-84921",
-            createdAtMillis = System.currentTimeMillis() - 86_400_000L * 2,
-            status = OrderStatus.DELIVERED,
-            addressSnapshot = "Flat 402, Greenview Residency, 12th Main, Indiranagar, Bengaluru - 560038",
-            deliverySlotLabel = "Express 10-Min (10–15 mins)",
-            paymentMethodLabel = "UPI (GPay / PhonePe)",
-            paymentRef = "DEMO_UPI_992841",
-            items = listOf(
-                OrderLineItem("p11", "Amul Taaza Toned Milk", "p11_v2", "1 L Tetra", 74.0, 69.0, 2, "milk", 0xFFE0F2FE),
-                OrderLineItem("p01", "Hybrid Red Tomato", "p01_v2", "1 kg", 68.0, 44.0, 1, "tomato", 0xFFFFE4E6),
-                OrderLineItem("p26", "Haldiram's Aloo Bhujia", "p26_v2", "400 g", 105.0, 92.0, 1, "namkeen", 0xFFFFEDD5)
+    val sampleOrders: List<OrderRecord> by lazy {
+        listOf(
+            OrderRecord(
+                id = "QK-84921",
+                createdAtMillis = System.currentTimeMillis() - 86_400_000L * 2,
+                status = OrderStatus.DELIVERED,
+                addressSnapshot = "Flat 402, Greenview Residency, 12th Main, Indiranagar, Bengaluru - 560038",
+                deliverySlotLabel = "Express 10-Min (10–15 mins)",
+                paymentMethodLabel = "UPI (GPay / PhonePe)",
+                paymentRef = "DEMO_UPI_992841",
+                items = listOf(
+                    OrderLineItem("p11", "Amul Taaza Toned Milk", "p11_v2", "1 L Tetra", 74.0, 69.0, 2, "milk", 0xFFE0F2FE),
+                    OrderLineItem("p01", "Hybrid Red Tomato", "p01_v2", "1 kg", 68.0, 44.0, 1, "tomato", 0xFFFFE4E6),
+                    OrderLineItem("p26", "Haldiram's Aloo Bhujia", "p26_v2", "400 g", 105.0, 92.0, 1, "namkeen", 0xFFFFEDD5)
+                ),
+                itemTotal = 274.0,
+                deliveryFee = 0.0,
+                totalSavings = 47.0,
+                grandTotal = 274.0
             ),
-            itemTotal = 274.0,
-            deliveryFee = 0.0,
-            totalSavings = 47.0,
-            grandTotal = 274.0
-        ),
-        OrderRecord(
-            id = "QK-84958",
-            createdAtMillis = System.currentTimeMillis() - 3_600_000L * 3,
-            status = OrderStatus.OUT_FOR_DELIVERY,
-            addressSnapshot = "Flat 402, Greenview Residency, 12th Main, Indiranagar, Bengaluru - 560038",
-            deliverySlotLabel = "Express 10-Min (10–15 mins)",
-            paymentMethodLabel = "QuickKart Wallet",
-            paymentRef = "DEMO_WALLET_318022",
-            items = listOf(
-                OrderLineItem("p16", "Aashirvaad Shudh Chakki Atta", "p16_v1", "5 kg", 295.0, 249.0, 1, "atta", 0xFFFEF3C7),
-                OrderLineItem("p12", "Amul Pasteurised Butter", "p12_v1", "100 g", 60.0, 56.0, 2, "butter", 0xFFFEF3C7)
-            ),
-            itemTotal = 361.0,
-            deliveryFee = 0.0,
-            totalSavings = 54.0,
-            grandTotal = 361.0
+            OrderRecord(
+                id = "QK-84958",
+                createdAtMillis = System.currentTimeMillis() - 3_600_000L * 3,
+                status = OrderStatus.OUT_FOR_DELIVERY,
+                addressSnapshot = "Flat 402, Greenview Residency, 12th Main, Indiranagar, Bengaluru - 560038",
+                deliverySlotLabel = "Express 10-Min (10–15 mins)",
+                paymentMethodLabel = "QuickKart Wallet",
+                paymentRef = "DEMO_WALLET_318022",
+                items = listOf(
+                    OrderLineItem("p16", "Aashirvaad Shudh Chakki Atta", "p16_v1", "5 kg", 295.0, 249.0, 1, "atta", 0xFFFEF3C7),
+                    OrderLineItem("p12", "Amul Pasteurised Butter", "p12_v1", "100 g", 60.0, 56.0, 2, "butter", 0xFFFEF3C7)
+                ),
+                itemTotal = 361.0,
+                deliveryFee = 0.0,
+                totalSavings = 54.0,
+                grandTotal = 361.0
+            )
         )
-    )
+    }
 }

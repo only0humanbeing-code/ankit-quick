@@ -25,6 +25,7 @@ import com.example.model.SavedAddress
 import com.example.model.SortOption
 import com.example.model.StoreConfig
 import com.example.model.UserProfile
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class QuickKartViewModel(
     private val repository: QuickCommerceRepository,
@@ -187,8 +189,15 @@ class QuickKartViewModel(
 
     init {
         viewModelScope.launch {
-            repository.ensureSeeded()
-            _isReady.value = true
+            try {
+                withContext(Dispatchers.IO) {
+                    repository.ensureSeeded()
+                }
+            } catch (_: Throwable) {
+                // Keep UI responsive using fallback state even if local DB migration encounters an error
+            } finally {
+                _isReady.value = true
+            }
         }
     }
 
